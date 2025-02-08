@@ -10,7 +10,7 @@ import Link from 'next/link'
 const links = [
     { Icon: House, name: "Home", link: "/" },
     { Icon: Map, name: "Map", link: "/map" },
-    { Icon: ClipboardList, name: "Generate Report", link: "/report" },
+    { Icon: ClipboardList, name: "Generate Report", link: "/report/upload" },
     { Icon: LayoutGrid, name: "Other", link: "/other" },
     { Icon: Bell, name: "Notifications", link: "/notifications" }
 ]
