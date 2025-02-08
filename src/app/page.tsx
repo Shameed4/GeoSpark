@@ -4,6 +4,8 @@ import { useState } from "react";
 import TimeOptions from "@/components/timeOptions";
 
 const blockClass = "w-[30%] h-40 bg-gradient-to-br from-black to-transparent rounded-md text-neutral-200 p-3"
+const blurBlockClass =
+  "w-[30%] h-40 bg-gradient-to-br from-black/50 to-transparent/50 backdrop-blur-md rounded-md text-neutral-200 p-3";
 const pollutants = [
   { label: "PM", sub: "2.5" },
   { label: "CO" },
@@ -18,12 +20,6 @@ const pollutants = [
   { label: "Hg" }
 ];
 
-
-
-
-
-
-
 export default function Home() {
   return (
     <div className="w-full">
@@ -32,11 +28,15 @@ export default function Home() {
       radial-gradient(ellipse 30% 30% at -20% -20%, white, transparent),
       radial-gradient(ellipse 150% 150% at 100% 0%, #A62100, #CED3CF)`
       }}>
-        <h1 className="text-white text-lg">Dashboard Overview</h1>
       </header>
       <main className="-translate-y-24 p-5">
         <div className="flex w-full justify-between">
-          <div className={blockClass}>
+          <div className="absolute -top-14 left-0 w-full flex justify-start ml-5">
+            <h1 className="text-5xl font-bold text-white">
+              <span className="drop-shadow-[0_2px_2px_rgba(0,0,0,0.4)]">Overview</span>
+            </h1>
+          </div>
+          <div className={blurBlockClass}>
             <h4>Stony Brook, NY</h4>
             <h3 className="text-lg">25 AQI</h3>
             <div className="flex">
@@ -48,7 +48,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <div className={blockClass}>
+          <div className={blurBlockClass}>
             <h4>Humidity</h4>
             <h3 className="text-lg">25 AQI</h3>
             <div className="flex">
@@ -60,7 +60,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <div className={blockClass}>
+          <div className={blurBlockClass}>
             <h4>Stony Brook, NY</h4>
             <h3 className="text-lg">25 AQI</h3>
             <div className="flex">

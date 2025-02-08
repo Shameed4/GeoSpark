@@ -13,7 +13,7 @@ export default function Upload() {
 
   return (
     <div className="min-h-screen w-full bg-[#111219] text-white p-8">
-      <div className="relative rounded-lg overflow-hidden mb-12 h-96">
+      <div className="relative rounded-lg overflow-hidden mb-8 h-80">
         <Image
           src="/uploadbg.jpeg"
           alt="Hero"
@@ -46,7 +46,7 @@ export default function Upload() {
       </div>
 
       <div>
-        <h2 className="text-2xl font-bold mb-6">Recently Uploaded</h2>
+        <h2 className="text-2xl font-bold mb-3">Recently Uploaded</h2>
         <div className="grid grid-cols-3 gap-6">
           {Array(3)
             .fill(null)
