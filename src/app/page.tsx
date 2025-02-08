@@ -1,9 +1,9 @@
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Lightbulb } from "lucide-react";
 import { cn } from "@/lib/utils";
 import TimeOptions from "@/components/timeOptions";
 import Table from "@/components/table";
 
-const blockClass = "w-[30%] h-40 bg-gradient-to-br from-black to-transparent rounded-md text-neutral-200 p-3"
+const blockClass = "w-[30%] h-40 bg-gradient-to-br from-black to-transparent rounded-md text-neutral-200 p-6"
 const pollutants = [
   { label: "PM", sub: "2.5" },
   { label: "CO" },
@@ -18,30 +18,24 @@ const pollutants = [
   { label: "Hg" }
 ];
 
-
-
-
-
-
-
 export default function Home() {
   return (
     <div className="w-full">
-      <header className="bg-cover h-52" style={{
+      <header className="bg-cover h-52 p-3 font-bold" style={{
         backgroundImage: `
       radial-gradient(ellipse 30% 30% at -20% -20%, white, transparent),
       radial-gradient(ellipse 150% 150% at 100% 0%, #A62100, #CED3CF)`
       }}>
-        <h1 className="text-white text-lg">Dashboard Overview</h1>
+        <h1 className="text-white text-3xl mx-4 my-8">Dashboard Overview</h1>
       </header>
-      <main className="-translate-y-24 p-5">
+      <main className="-translate-y-28 p-5">
         <div className="flex w-full justify-between">
           <div className={blockClass}>
-            <h4>Stony Brook, NY</h4>
+            <h4 className="mb-2">Stony Brook, NY</h4>
             <h3 className="text-lg">25 AQI</h3>
             <div className="flex">
-              <div className="flex">
-                <div className="flex items-center text-[#6BEBA4] px-2 p-1 rounded-3xl bg-[rgba(38,102,99,0.2)]">
+              <div className="flex text-sm">
+                <div className="flex items-center text-[#6BEBA4] px-[4px] rounded-3xl bg-[rgba(38,102,99,0.2)]">
                   <ArrowUpRight size={15} /> 4.8%
                 </div>
                 <div className="ml-1 py-1">from yesterday</div>
@@ -49,7 +43,7 @@ export default function Home() {
             </div>
           </div>
           <div className={blockClass}>
-            <h4>Humidity</h4>
+            <h4 className="mb-2">Humidity</h4>
             <h3 className="text-lg">25 AQI</h3>
             <div className="flex">
               <div className="flex">
@@ -61,16 +55,8 @@ export default function Home() {
             </div>
           </div>
           <div className={blockClass}>
-            <h4>Stony Brook, NY</h4>
-            <h3 className="text-lg">25 AQI</h3>
-            <div className="flex">
-              <div className="flex">
-                <div className="flex items-center text-[#6BEBA4] px-2 p-1 rounded-3xl bg-[rgba(38,102,99,0.2)]">
-                  <ArrowUpRight size={15} /> 4.8%
-                </div>
-                <div className="ml-1 py-1">from yesterday</div>
-              </div>
-            </div>
+            <div className="flex mb-2"><Lightbulb className="mr-2"/>Daily tip</div>
+            <div className="text-neutral-300 text-sm">Avoid opening any interior doors that feel hot, and stay away from fragile trees and downed power lines.</div>
           </div>
         </div>
 

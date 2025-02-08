@@ -32,7 +32,7 @@ export default function RootLayout({
       >
         <div className="flex min-h-[100vh]">
           <div className="flex flex-col p-10 gap-7 w-80 border-r-neutral-800 border-r-[1px]">
-            <h1 className="text-xl text-neutral-300 mb-8">Project Name</h1>
+            <h1 className="text-xl text-white mb-8">Project Name</h1>
             <Nav />
             <div className="relative text-neutral-100">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2" />
