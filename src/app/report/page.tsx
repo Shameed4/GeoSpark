@@ -1,3 +1,3 @@
 export default function ReportPage() {
-    return <h1>Page</h1>
+    return <h1>Report Page</h1>
 }
