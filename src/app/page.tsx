@@ -1,7 +1,7 @@
 import { ArrowUpRight } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
 import TimeOptions from "@/components/timeOptions";
+import Table from "@/components/table";
 
 const blockClass = "w-[30%] h-40 bg-gradient-to-br from-black to-transparent rounded-md text-neutral-200 p-3"
 const pollutants = [
@@ -88,6 +88,7 @@ export default function Home() {
             </div>
           </div>
         </div>
+        <Table />
       </main >
     </div >
   );
