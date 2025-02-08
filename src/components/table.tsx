@@ -11,7 +11,7 @@ export default function Table() {
     return (
         <div className="bg-black text-neutral-200 p-5 pb-0 rounded-md">
             <div className="flex justify-between">
-                <caption className="text-lg text-white p-2 text-left">Nearby Fires</caption>
+                <h2 className="text-lg text-white p-2 text-left">Nearby Fires</h2>
                 <DropdownMenu>
                     <DropdownMenuTrigger className="bg-[rgb(41,41,44)] px-4 py-1 flex gap-2 items-center rounded-sm">Sort by: Distance <ChevronDown size={22}/></DropdownMenuTrigger>
 
