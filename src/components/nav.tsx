@@ -16,11 +16,12 @@ const links = [
 ]
 
 export default function Nav() {
+    const path = usePathname();
     return (
         <div className="text-neutral-500">
             <div className='text-sm mb-3'>NAVIGATION</div>
             <div className="flex flex-col gap-2 text-md">
-                {links.map(({ Icon, name, link }) => <Link href={link} key={name}><div className={`flex ${link == usePathname() ? "bg-gradient-to-r from-white to-red-700 text-black" : ""} p-3 rounded-sm`}><Icon className='mr-2'/>{name}</div></Link>)}
+                {links.map(({ Icon, name, link }) => <Link href={link} key={name}><div className={`flex ${link == path ? "bg-gradient-to-r from-white to-red-700 text-black" : ""} p-3 rounded-sm`}><Icon className='mr-2'/>{name}</div></Link>)}
             </div>
         </div>
     )
