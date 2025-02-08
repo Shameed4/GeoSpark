@@ -1,6 +1,8 @@
 "use client";
 import React, { useState } from "react";
 import Image from "next/image";
+import { ArrowUpRight } from "lucide-react";
+import TimeOptions from "@/components/timeOptions";
 
 export default function Upload() {
   const [liked, setLiked] = useState([false, false, false]);
@@ -31,7 +33,11 @@ export default function Upload() {
           </p>
           <button
             onClick={() => alert("Upload logic triggered!")}
-            className="flex items-center justify-center gap-2 px-6 py-3 text-white font-semibold rounded-xl bg-gradient-to-r from-white to-orange-500 hover:from-orange-400 hover:to-orange-600 transition shadow-lg"
+            className="flex items-center justify-center gap-2 px-6 py-3 text-white font-semibold rounded-xl 
+                       bg-gradient-to-r from-white to-orange-500 
+                       hover:from-orange-400 hover:to-orange-600
+                       transition-colors transition-transform duration-300 ease-in-out 
+                       hover:scale-105 active:scale-95 shadow-lg"
           >
             <span className="drop-shadow-[0_2px_2px_rgba(0,0,0,0.4)]">Upload</span>
             <Image
@@ -44,7 +50,6 @@ export default function Upload() {
           </button>
         </div>
       </div>
-
       <div>
         <h2 className="text-2xl font-bold mb-3">Recently Uploaded</h2>
         <div className="grid grid-cols-3 gap-6">
@@ -53,9 +58,10 @@ export default function Upload() {
             .map((_, index) => (
               <div
                 key={index}
-                className="relative rounded-xl shadow-lg overflow-hidden bg-gradient-to-r from-orange-500 to-white p-[2px]"
+                className="group relative transition-transform duration-300 group-hover:scale-105"
               >
-                <div className="bg-gray-800 rounded-lg">
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-orange-500 to-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="relative rounded-xl shadow-lg overflow-hidden bg-gray-800 m-[2px]">
                   <div className="relative w-full h-48">
                     <Image
                       src="/uploadbg.jpeg"
@@ -78,8 +84,16 @@ export default function Upload() {
                       </div>
                       <span>@User{index + 1}</span>
                     </div>
-                    <p className="text-sm text-gray-500 mt-3">Last Updated {`${8 - index}:00 PM`}</p>
-                    <button className="w-full mt-4 py-2 rounded-lg font-bold bg-gradient-to-r from-[rgba(255,255,255,0.15)] to-[#8B0000] hover:from-[rgba(255,255,255,0.3)] hover:to-[#a00000] text-white transition">
+                    <p className="text-sm text-gray-500 mt-3">
+                      Last Updated {`${8 - index}:00 PM`}
+                    </p>
+                    <button
+                      className="w-full mt-4 py-2 rounded-lg font-bold 
+                                 bg-gradient-to-r from-[rgba(255,255,255,0.15)] to-[#8B0000]
+                                 hover:from-[rgba(255,255,255,0.3)] hover:to-[#a00000] text-white
+                                 transition-colors transition-transform duration-300 ease-in-out 
+                                 hover:scale-105 active:scale-95"
+                    >
                       View Details
                     </button>
                   </div>
@@ -108,7 +122,7 @@ export default function Upload() {
                           strokeLinecap="round"
                           strokeLinejoin="round"
                           strokeWidth={2}
-                          d="M12 21l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21z"
+                          d="M12 21l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
                         />
                       </svg>
                     )}
