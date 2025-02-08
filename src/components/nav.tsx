@@ -22,7 +22,14 @@ export default function Nav() {
       <div className="flex flex-col gap-2 text-md">
         {links.map(({ Icon, name, link }) => (
           <Link href={link} key={name}>
-            <div className={`flex ${link === pathname ? "bg-gradient-to-r from-white to-red-700 text-black" : ""} p-3 rounded-sm`}>
+            <div
+              className={`
+                flex p-3 rounded-sm transition-colors duration-300 ease-in-out
+                ${link === pathname 
+                  ? "bg-gradient-to-r from-white to-#ce4b0c text-black" 
+                  : "hover:text-neutral-200"}
+              `}
+            >
               <Icon className='mr-2' />
               {name}
             </div>
