@@ -16,7 +16,6 @@ const links = [
 ]
 
 export default function Nav() {
-    console.log(usePathname());
     return (
         <div className="text-neutral-500">
             <div className='text-sm mb-3'>NAVIGATION</div>

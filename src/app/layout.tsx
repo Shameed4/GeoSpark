@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Nav from "@/components/ui/nav";
+import Nav from "@/components/nav";
+import { ChevronRight, Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,10 +28,28 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#0E1018]`}
       >
-        <div className="flex">
-          <Nav />
+        <div className="flex min-h-[100vh]">
+          <div className="flex flex-col p-10 gap-7 w-80 border-r-neutral-800 border-r-[1px]">
+            <h1 className="text-xl text-neutral-300 mb-8">Project Name</h1>
+            <Nav />
+            <div className="relative text-neutral-100">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2" />
+              <Input
+                type="text"
+                placeholder="Ask AI"
+                className="pl-10 py-2 bg-[#29292C] border-none rounded-lg focus:outline-none focus:ring-2 focus:ring-blue"
+              />
+            </div>
+            <div className="p-2 bg-[#29292C] rounded-sm flex items-center">
+              <div className="bg-gradient-to-t from-transparent to-white rounded-full w-14 h-14 border-white border-solid border-2 mr-2"></div>
+              <div>
+                <h3 className="text-white text-lg">My account</h3>
+                <div className="flex items-center text-neutral-400">View Account <ChevronRight size={18} /></div>
+              </div>
+            </div>
+          </div>
           {children}
         </div>
       </body>
