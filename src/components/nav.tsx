@@ -2,7 +2,7 @@
 
 import { usePathname } from 'next/navigation'
 import React from 'react'
-import { Bell, ClipboardList, House, Sparkles, Map } from 'lucide-react'
+import { ClipboardList, House, Sparkles, Map } from 'lucide-react'
 import Link from 'next/link'
 
 const links = [
@@ -10,7 +10,6 @@ const links = [
   { Icon: Map, name: "Map", link: "/map" },
   { Icon: ClipboardList, name: "Generate Report", link: "/report/upload" },
   { Icon: Sparkles, name: "Ask AI", link: "/askai" },
-  { Icon: Bell, name: "Notifications", link: "/notifications" }
 ]
 
 export default function Nav() {
@@ -33,7 +32,6 @@ export default function Nav() {
               {name}
             </div>)}
           </Link>
-
         ))}
       </div>
     </div>
