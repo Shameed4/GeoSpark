@@ -2,6 +2,7 @@ import { ArrowUpRight, Lightbulb } from "lucide-react";
 import { cn } from "@/lib/utils";
 import TimeOptions from "@/components/timeOptions";
 import Table from "@/components/table";
+import Weather from "@/components/weather"
 
 const blockClass = "w-[30%] h-40 bg-gradient-to-br from-black to-transparent rounded-md text-neutral-200 p-6"
 const pollutants = [
@@ -43,7 +44,8 @@ export default function Home() {
             </div>
           </div>
           <div className={blockClass}>
-            <h4 className="mb-2">Humidity</h4>
+            {/* <Weather></Weather> */}
+            {/* <h4 className="mb-2">Humidity</h4>
             <h3 className="text-lg">25 AQI</h3>
             <div className="flex">
               <div className="flex">
@@ -52,7 +54,7 @@ export default function Home() {
                 </div>
                 <div className="ml-1 py-1">from yesterday</div>
               </div>
-            </div>
+            </div> */}
           </div>
           <div className={blockClass}>
             <div className="flex mb-2"><Lightbulb className="mr-2"/>Daily tip</div>
