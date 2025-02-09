@@ -6,6 +6,7 @@ import Nav from "@/components/nav";
 import { ChevronRight, Search, Lightbulb, LogOut } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,6 +26,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const checkLoginStatus = () => {
@@ -48,6 +50,7 @@ export default function RootLayout({
     localStorage.removeItem('email'); // Clear email from localStorage
     localStorage.setItem('isLoggedIn', 'false'); // Update login status
     setIsLoggedIn(false); // Update state to logged out
+    router.push('/'); // Redirect to homepage
     console.log("User successfully logged out.");
   };
 

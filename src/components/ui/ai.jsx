@@ -1,12 +1,12 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
-import { Sparkles, Send } from "lucide-react";
+import { Sparkles, Send, Bot, User } from "lucide-react";
 
 export default function AI() {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([
     { text: "What can I ask you to do?", sender: "user" },
-    { text: "Ask me anything about wildfires", sender: "ai" },
+    { text: "Ask me anything about wildfires!", sender: "ai" },
   ]);
 
   const messagesEndRef = useRef(null);
@@ -77,16 +77,30 @@ export default function AI() {
             Ask AI
           </h1>
         </div>
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-6">
           {messages.map((msg, index) => (
             <div
               key={index}
-              className={`w-full max-w-3xl p-3 rounded-xl text-sm ${msg.sender === "user"
-                ? "bg-gray-600 text-white self-end"
-                : "bg-gray-700 text-white self-start"
+              className={`w-full max-w-3xl ${msg.sender === "user" ? "self-end" : "self-start"
                 }`}
             >
-              {msg.text}
+              {msg.sender === "user" ? (
+                <div>
+                  <p className="text-xs text-white/60 mb-1">YOU</p>
+                  <div className="flex items-center p-3 bg-gray-600 text-white rounded-xl text-sm">
+                    <User className="w-5 h-5 text-white mr-2" />
+                    <span>{msg.text}</span>
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <p className="text-xs text-white/60 mb-1 self-end">AI</p>
+                  <div className="flex items-center p-3 bg-gray-700 text-white rounded-xl text-sm">
+                    <Bot className="w-5 h-5 text-white mr-2" />
+                    <span>{msg.text}</span>
+                  </div>
+                </div>
+              )}
             </div>
           ))}
           <div ref={messagesEndRef} />
@@ -104,7 +118,7 @@ export default function AI() {
               type="text"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              placeholder="Ask me anything about wildfires"
+              placeholder="Ask me anything about wildfires..."
               className="w-full px-12 py-4 bg-white rounded-xl pr-12 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/20"
             />
             <button

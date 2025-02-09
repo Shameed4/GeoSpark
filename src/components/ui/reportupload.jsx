@@ -50,7 +50,7 @@ export default function Upload() {
         />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black"></div>
         <div className="absolute inset-0 flex flex-col justify-center items-center text-center px-4">
-          <h1 className="text-4xl font-bold mb-2">
+          <h1 className="drop-shadow-[0_2px_2px_rgba(0,0,0,0.4)] text-4xl font-bold mb-2">
             Generate a Report For An Undocumented Wildfire Near You
           </h1>
           <p className="text-gray-300 mb-6">Accepted Video Formats: .MP4, .MOV, .M4V</p>

@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from "react";
-import { ArrowUpRight, Lightbulb } from "lucide-react";
+import { ArrowUpRight, Lightbulb, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import TimeOptions from "@/components/timeOptions";
 
@@ -12,13 +12,20 @@ const blurBlockClass =
 
 const pollutants = [
   { label: "PM", sub: "2.5" },
+  { label: "Zn" },
   { label: "CO" },
   { label: "CO", sub: "2" },
+  { label: "Cu" },
   { label: "CH", sub: "4" },
+  { label: "As" },
+  { label: "Cd" },
+  { label: "Cr" },
   { label: "VOCs" },
   { label: "PAHs" },
   { label: "NO", sub: "x" },
+  { label: "Ni" },
   { label: "SO", sub: "2" },
+  { label: "Mn" },
   { label: "O", sub: "3" },
   { label: "Pb" },
   { label: "Hg" },
@@ -26,28 +33,28 @@ const pollutants = [
 
 const nearbyFires = [
   {
-    location: "Los Angeles",
-    cause: "Unknown",
-    type: "Fire",
-    start: "Dec. 1",
-    distance: "100",
-    status: "Resolved",
-  },
-  {
     location: "San Diego",
-    cause: "Arson",
-    type: "High Risk",
-    start: "Jan. 1",
-    distance: "200",
+    cause: "Dry Conditions",
+    type: "Fire",
+    start: "Jan. 21",
+    distance: "2,761.3",
     status: "Ongoing",
   },
   {
-    location: "San Francisco",
-    cause: "Lightning",
+    location: "Los Angeles",
+    cause: "Dry Conditions",
     type: "Fire",
-    start: "Feb. 1",
-    distance: "300",
-    status: "Inconclusive",
+    start: "Jan. 7",
+    distance: "2,789.1",
+    status: "Resolved",
+  },
+  {
+    location: "Santa Barbara",
+    cause: "Dry Conditions",
+    type: "Fire",
+    start: "Jan. 1",
+    distance: "2,878.0 ",
+    status: "Resolved",
   },
 ];
 
@@ -119,15 +126,15 @@ export default function Home() {
               Overview
             </h1>
           </div>
-          <InfoCard title={city} value={aqi || "Loading..."} change={aqiChange || "..."} />
-          <InfoCard title="Humidity" value={humidity || "Loading..."} change={humidityChange || "..."} negative />
+          <InfoCard title={city} value={aqi || "Loading..."} change={aqiChange || "..."} miniText={"Wildfires worsen air quality by releasing smoke and harmful particles into the air."}/>
+          <InfoCard title="Humidity" value={humidity || "Loading..."} change={humidityChange || "..."} negative miniText={"Low humidity increases wildfire risk by drying out plants, while high humidity helps prevent fires."} />
           <TipCard />
         </div>
 
         <div className="my-10 flex w-full justify-between">
           <div className={cn(blockClass, "w-[35%]")}>
             <h4 className="text-lg">Pollutants</h4>
-            <div className="flex flex-wrap gap-2">
+            <div className="mt-3 mb-5 flex flex-wrap gap-2">
               {pollutants.map(({ label, sub }) => (
                 <div
                   key={label + sub}
@@ -175,7 +182,7 @@ function NearbyFiresTable({ sortOption, setSortOption }: NearbyFiresTableProps) 
               colSpan={6}
               className="pl-3 pr-6 py-4 text-xl text-neutral-200 flex items-center mt-[-30px]"
             >
-              Nearby Fires
+              Major Fires
               <select
                 className="bg-neutral-800 text-neutral-300 text-sm p-2 rounded-md ml-auto border-r-[16px] border-r-transparent"
                 value={sortOption}
@@ -248,30 +255,112 @@ function getStatusStyle(status: string) {
   }
 }
 
-function InfoCard({ title, value, change, negative }: { title: string, value: string, change: string, negative?: boolean }) {
+function InfoCard({ title, value, change, negative, miniText }: { title: string, value: string, change: string, negative?: boolean, miniText?: string;}) {
   return (
     <div className={blurBlockClass}>
       <h4>{title}</h4>
-      <h3 className="text-lg">{value}</h3>
+      <h3 className="mt-[10px] text-lg">{value}</h3>
       <div className="flex items-center">
-        <div className={`flex items-center ${negative ? "text-[#EB6B6B] bg-[rgba(102,38,38,0.2)]" : "text-[#6BEBA4] bg-[rgba(38,102,99,0.2)]"} px-2 py-1 rounded-3xl`}>
+        <div className={`mt-[10px] flex items-center ${negative ? "text-[#EB6B6B] bg-[rgba(102,38,38,0.2)]" : "text-[#6BEBA4] bg-[rgba(38,102,99,0.2)]"} px-2 py-1 rounded-3xl`}>
           <ArrowUpRight size={15} />
           {change}
         </div>
-        <span className="ml-1 text-xs">from yesterday</span>
+        <span className="ml-1 mt-3 text-xs">from yesterday</span>
       </div>
+      {miniText && (
+        <p className="mt-7 text-xs text-neutral-300">
+          {miniText}
+        </p>
+      )}
     </div>
   );
 }
 
 function TipCard() {
+  const tips = [
+    "Avoid opening interior doors that feel hot, and stay away from downed power lines.",
+    "If smoke is heavy, stay indoors with windows closed and use an air purifier if available.",
+    "Have an evacuation plan ready if you're in a fire-prone area.",
+    "Minimize outdoor activity when AQI is high to protect your respiratory system.",
+    "Keep N95 masks available for outdoor use during poor air quality.",
+    "Sign up for local wildfire alerts to stay informed in real time.",
+    "Close vents, doors, and windows to prevent smoke from entering your home.",
+    "Prepare an emergency bag with essentials like water, food, and important documents.",
+    "Check on vulnerable family members or neighbors during wildfire events.",
+  ];
+
+  const [currentTipIndex, setCurrentTipIndex] = useState(0);
+  const [visible, setVisible] = useState(true);
+
+  // Automatically cycle through tips every 5 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      handleNext(); // Auto-cycle forward
+    }, 5000);
+    return () => clearInterval(interval); // Cleanup interval on unmount
+  }, []);
+
+  const handleNext = () => {
+    setVisible(false); // Start fade-out animation
+    setTimeout(() => {
+      setCurrentTipIndex((prevIndex) =>
+        prevIndex < tips.length - 1 ? prevIndex + 1 : 0
+      ); // Move forward or loop back to the first tip
+      setVisible(true); // Trigger fade-in
+    }, 500); // Duration of fade-out animation
+  };
+
+  const handleBack = () => {
+    setVisible(false); // Start fade-out animation
+    setTimeout(() => {
+      setCurrentTipIndex((prevIndex) =>
+        prevIndex > 0 ? prevIndex - 1 : tips.length - 1
+      ); // Move backward or loop to the last tip
+      setVisible(true); // Trigger fade-in
+    }, 500);
+  };
+
   return (
-    <div className={blurBlockClass}>
+    <div className={cn("relative", blurBlockClass)}>
       <div className="flex">
         <Lightbulb className="mr-2 mb-2" />
-        <h4>Daily Tip</h4>
+        <h4>Wildfire Safety Tips</h4>
       </div>
-      <p className="text-sm">Avoid opening any interior doors that feel hot, and stay away from fragile trees and downed power lines.</p>
+      <p
+        className={cn(
+          "mt-[15px] text-sm transition-opacity duration-500",
+          visible ? "opacity-100" : "opacity-0"
+        )}
+      >
+        {tips[currentTipIndex]}
+      </p>
+
+      <div className="flex justify-between items-center mt-5">
+        <button
+          onClick={handleBack}
+          className="p-2 bg-gray-700 rounded-full hover:bg-gray-600 transition"
+        >
+          <ChevronLeft className="text-white w-5 h-5" />
+        </button>
+        <button
+          onClick={handleNext}
+          className="p-2 bg-gray-700 rounded-full hover:bg-gray-600 transition"
+        >
+          <ChevronRight className="text-white w-5 h-5" />
+        </button>
+      </div>
+
+      <div className="flex justify-center mt-3 space-x-2">
+        {tips.map((_, index) => (
+          <div
+            key={index}
+            className={cn(
+              "w-3 h-3 rounded-full transition-all duration-300",
+              index === currentTipIndex ? "bg-white" : "bg-gray-500 opacity-50"
+            )}
+          />
+        ))}
+      </div>
     </div>
   );
 }
