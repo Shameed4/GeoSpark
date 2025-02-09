@@ -1,7 +1,7 @@
 // Reverse geocoding: Get a place name from a "lat,lon" string
 import mapboxgl from "mapbox-gl";
 mapboxgl.accessToken =
-    "pk.eyJ1Ijoicml0ZXNzc2hoaCIsImEiOiJjbTZ3aXRrc3UwajF3MmxxNm1xMDYwNWlxIn0.ovuV5vNE3yW_gcwDIMk4yA";
+    "API-KEY";
 
 export { mapboxgl };
 
