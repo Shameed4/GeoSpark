@@ -24,7 +24,7 @@ export default function MapPage() {
                 bearing: -17.6,
             });
 
-            mapInstance.on("load", () => {
+            mapInstance.on("load", async () => {
                 // Add 3D terrain
                 mapInstance.addSource("mapbox-dem", {
                     type: "raster-dem",
@@ -34,13 +34,58 @@ export default function MapPage() {
                 });
                 mapInstance.setTerrain({ source: "mapbox-dem", exaggeration: 1.5 });
 
-                // Add custom markers
+                // Add custom markers for fire locations (if needed)
                 addCustomMarkers(mapInstance);
+
+                // Fetch and add GeoJSON data as hospital markers
+                const geojsonData = await fetchGeoJSONData();
+                if (geojsonData) {
+                    addHospitalMarkers(geojsonData, mapInstance);
+                }
 
                 setMap(mapInstance);
             });
         }
+
+        return () => map?.remove();
     }, [map]);
+
+    async function addHospitalMarkers(geojsonData, mapInstance) {
+        geojsonData.features.forEach((feature) => {
+            const coordinates = feature.geometry.coordinates;
+            const description = feature.properties.description || "Hospital";
+
+            // Create a DOM element for the hospital marker
+            const el = document.createElement("div");
+            el.className = "hospital-marker";
+            el.style.fontSize = "24px"; // Adjust size as needed
+            el.style.cursor = "pointer";
+            el.textContent = "🏥"; // Set the hospital emoji
+
+            // Add marker to the map
+            new mapboxgl.Marker(el)
+                .setLngLat(coordinates)
+                .setPopup(
+                    new mapboxgl.Popup({ offset: 25 }).setText(description)
+                ) // Add popup
+                .addTo(mapInstance);
+        });
+    }
+
+    // Function to fetch GeoJSON data from the Flask backend
+    async function fetchGeoJSONData() {
+        try {
+            const response = await fetch('http://127.0.0.1:5000/api/geojson'); // Adjust URL if needed
+            if (!response.ok) {
+                throw new Error('Failed to fetch GeoJSON data');
+            }
+            const geojsonData = await response.json();
+            return geojsonData;
+        } catch (error) {
+            console.error('Error fetching GeoJSON data:', error);
+            return null;
+        }
+    }
 
     async function fetchMarkerData() {
         try {
