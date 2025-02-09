@@ -11,7 +11,7 @@ app = Flask(__name__)
 CORS(app)  # Enable CORS
 
 # Set up OpenAI API key
-client = OpenAI(api_key='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')  # Set this environment variable or hardcode for testing
+client = OpenAI(api_key='API_KEY')  # Set this environment variable or hardcode for testing
 
 def load_marker_data():
     if os.path.exists('database.json'):
