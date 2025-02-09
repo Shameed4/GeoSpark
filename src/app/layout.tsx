@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, ABeeZee, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import Link from "next/link";
 import Nav from "@/components/nav";
 import { ChevronRight, Search, Lightbulb } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -36,13 +37,15 @@ export default function RootLayout({
           <div className="flex flex-col p-10 gap-7 w-80 border-r-neutral-800 border-r-[1px]">
             <h1 className="text-xl text-neutral-300 mb-8">LIT 🔥</h1>
             <Nav />
-            <div className="p-2 bg-[#29292C] rounded-sm flex items-center">
+            <Link href="/account" className="p-2 bg-[#29292C] rounded-sm flex items-center hover:bg-[#38383B] transition-colors">
               <div className="bg-gradient-to-t from-transparent to-white rounded-full w-14 h-14 border-white border-solid border-2 mr-2"></div>
               <div>
                 <h3 className="text-white text-lg">My account</h3>
-                <div className="flex items-center text-neutral-400">View Account <ChevronRight size={18} /></div>
+                <div className="flex items-center text-neutral-400">
+                  View Account <ChevronRight size={18} />
+                </div>
               </div>
-            </div>
+            </Link>
           </div>
           {children}
         </div>

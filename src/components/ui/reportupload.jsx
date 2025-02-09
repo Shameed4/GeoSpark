@@ -29,7 +29,7 @@ export default function Upload() {
             Generate a Report For An Undocumented Wildfire Near You
           </h1>
           <p className="text-gray-300 mb-6">
-            Accepted File Formats: .JPG, .PNG, .GIF, .HEIC
+            Accepted Video Formats: .MP4, .MOV, .M4V
           </p>
           <button
             onClick={() => alert("Upload logic triggered!")}
@@ -89,8 +89,7 @@ export default function Upload() {
                     </p>
                     <button
                       className="w-full mt-4 py-2 rounded-lg font-bold 
-                                 bg-gradient-to-r from-[rgba(255,255,255,0.15)] to-[#8B0000]
-                                 hover:from-[rgba(255,255,255,0.3)] hover:to-[#a00000] text-white
+                                 bg-gray-700 text-white
                                  transition-colors transition-transform duration-300 ease-in-out 
                                  hover:scale-105 active:scale-95"
                     >
