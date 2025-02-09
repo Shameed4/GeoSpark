@@ -1,20 +1,43 @@
-"use client"
-import React, { useState } from 'react';
+"use client";
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { auth, provider } from '../googleSignin/config';
+import { signInWithPopup } from 'firebase/auth';
 
-const Register = () => {
+export default function Register() {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [value, setValue] = useState('');
+    const router = useRouter();
+
+    const handleGoogleRegister = () => {
+        signInWithPopup(auth, provider)
+            .then((data) => {
+                setValue(data.user.email);
+                console.log('Google Sign-In Success:', data.user.email);
+                localStorage.setItem('email', data.user.email);
+                localStorage.setItem('isLoggedIn', 'true'); // Set login status
+                window.dispatchEvent(new Event('storage')); // Trigger global update
+                router.push('/'); // Redirect to homepage
+            })
+            .catch((error) => {
+                console.error('Google sign-in error:', error);
+            });
+    };
+
+    useEffect(() => {
+        const storedEmail = localStorage.getItem('email');
+        if (storedEmail) {
+            setValue(storedEmail);
+        }
+    }, []);
 
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log('Registered with:', { firstName, email, password });
-    };
-
-    const handleGoogleRegister = () => {
-        console.log('Registering with Google');
     };
 
     return (
@@ -28,7 +51,7 @@ const Register = () => {
                 <h2 className="text-white text-2xl font-bold mb-6 text-center">Register</h2>
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div>
-                        <label htmlFor="firstName" className="block text-white text-sm font-medium text-gray-700">First Name</label>
+                        <label htmlFor="firstName" className="block text-white text-sm font-medium">First Name</label>
                         <input
                             type="text"
                             id="firstName"
@@ -40,7 +63,7 @@ const Register = () => {
                         />
                     </div>
                     <div>
-                        <label htmlFor="lastName" className="block text-white text-sm font-medium text-gray-700">Last Name</label>
+                        <label htmlFor="lastName" className="block text-white text-sm font-medium">Last Name</label>
                         <input
                             type="text"
                             id="lastName"
@@ -52,7 +75,7 @@ const Register = () => {
                         />
                     </div>
                     <div>
-                        <label htmlFor="email" className="text-white block text-sm font-medium text-gray-700">Email</label>
+                        <label htmlFor="email" className="text-white block text-sm font-medium">Email</label>
                         <input
                             type="email"
                             id="email"
@@ -64,7 +87,7 @@ const Register = () => {
                         />
                     </div>
                     <div>
-                        <label htmlFor="password" className="text-white block text-sm font-medium text-gray-700">Password</label>
+                        <label htmlFor="password" className="text-white block text-sm font-medium">Password</label>
                         <input
                             type="password"
                             id="password"
@@ -105,5 +128,3 @@ const Register = () => {
         </div>
     );
 };
-
-export default Register;
