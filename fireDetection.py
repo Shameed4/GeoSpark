@@ -2,112 +2,72 @@ import subprocess
 import os
 import cv2
 import base64
+import requests
 from ultralytics import YOLO
 from openai import OpenAI
+from datetime import datetime
+import json
 
 # Load the YOLO model
-model = YOLO('fire_l.pt')  # Replace with your model file if different
-
-# Class names for fire and smoke
+model = YOLO('fire_l.pt')
 FIRE_CLASS_NAME = "fire"
 SMOKE_CLASS_NAME = "smoke"
 
-# Function to detect fire and smoke in video
-def detect_fire_and_smoke(video_source, output_file="fire_smoke_detection_output.mp4"):
-    # Capture video from the file or camera
-    cap = cv2.VideoCapture(video_source)
+# Initialize OpenAI client
+client = OpenAI(api_key='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')
 
-    # Check if the video capture is successful
+
+def detect_fire_and_smoke(video_source):
+    """Detects fire and smoke in the video and returns True if detected."""
+    cap = cv2.VideoCapture(video_source)
     if not cap.isOpened():
         print("Error opening video file or stream")
-        return
+        return False
 
-    # Get the width, height, and frames per second (fps) of the input video
-    frame_width = int(cap.get(3))
-    frame_height = int(cap.get(4))
-    fps = int(cap.get(cv2.CAP_PROP_FPS))
-
-    # Define the codec and create a VideoWriter object to save the video
-    temp_output_file = "temp_fire_smoke_output.mp4"
-    fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # Using mp4v for broader compatibility
-    out = cv2.VideoWriter(temp_output_file, fourcc, fps, (frame_width, frame_height))
-
-    # Loop through the frames of the video
+    fire_detected = False
     while cap.isOpened():
         ret, frame = cap.read()
-
-        # Break the loop if the video ends
         if not ret:
             break
 
-        # Run YOLO inference on the frame
         results = model(frame)
-
-        # Loop through the detection results
         for result in results:
-            # Filter detections for fire and smoke classes
             for bbox, class_id, conf in zip(result.boxes.xyxy, result.boxes.cls, result.boxes.conf):
                 class_name = model.model.names[int(class_id)]
-                if conf > 0.5:  # Confidence threshold
-                    # Draw bounding box and label based on the class
-                    x1, y1, x2, y2 = map(int, bbox)
-                    if class_name == FIRE_CLASS_NAME:
-                        cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 0, 255), 2)  # Red box for fire
-                        label = f'FIRE: {conf:.2f}'
-                        cv2.putText(frame, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
-                    elif class_name == SMOKE_CLASS_NAME:
-                        cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 255), 2)  # Yellow box for smoke
-                        label = f'SMOKE: {conf:.2f}'
-                        cv2.putText(frame, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 255), 2)
-
-        # Display the frame in a window for real-time detection
-        cv2.imshow("Fire and Smoke Detection", frame)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
+                if conf > 0.5 and class_name in [FIRE_CLASS_NAME, SMOKE_CLASS_NAME]:
+                    fire_detected = True
+                    break
+            if fire_detected:
+                break
+        if fire_detected:
             break
 
-        # Write the frame with bounding boxes to the temporary output video file
-        out.write(frame)
+    cap.release()
+    return fire_detected
 
-    # Release the video capture and writer objects, and close any open windows
-    # cap.release()
-    # out.release()
-    # cv2.destroyAllWindows()
+def get_weather_and_aqi(lat, lon):
+    """Fetches weather and air quality data using OpenWeatherMap API."""
+    api_key = "832ce1e9aa05f42e713ea690076b99c6"
+    url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={api_key}&units=imperial"
+    url2 = f"http://api.openweathermap.org/data/2.5/air_pollution/forecast?lat={lat}&lon={lon}&appid={api_key}"
+    response = requests.get(url).json()
+    response2 = requests.get(url2).json()
 
-    # Convert the temporary output file to ensure compatibility using FFmpeg
-    final_output_file = output_file
-    temp_output_file_path = os.path.abspath(temp_output_file)
-    final_output_file_path = os.path.abspath(final_output_file)
+    weather_data = {
+        "temp": response['main']['temp'],
+        "humidity": response['main']['humidity'],
+        "wind_str": response['wind']['speed'],
+        "wind_dir": response['wind']['deg'],
+        "pressure": response['main'].get('pressure'),
+        "visibility": response.get('visibility'),
+        "precipitation": response.get('rain', {}).get('1h', 0),
+        "aqi": response2["main"]["aqi"]
+    }
+    return weather_data
 
-    ffmpeg_command = [
-        'ffmpeg',
-        '-i', temp_output_file_path,  # Input file
-        '-c:v', 'libx264',            # Use H.264 codec
-        '-preset', 'fast',            # Encoding speed
-        '-crf', '23',                 # Constant rate factor (quality)
-        '-c:a', 'aac',                # Audio codec (if audio is present)
-        '-b:a', '192k',               # Audio bitrate (if audio is present)
-        '-movflags', '+faststart',    # Enable fast start for web
-        final_output_file_path        # Output file
-    ]
-
-    # Run FFmpeg command
-    subprocess.run(ffmpeg_command, check=True)
-
-    # Clean up temporary files
-    if os.path.exists(temp_output_file):
-        os.remove(temp_output_file)
-
-    print(f"Output video saved as {final_output_file_path}")
-
-client = OpenAI(api_key='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')
-
-# Assume you've already set up your OpenAI client (client) and imported other needed libraries
-
+# Helper functions (from your existing code)
 def get_frame_from_video(video_source, frame_number=0):
-    """
-    Opens the video source, jumps to the specified frame number,
-    and returns that frame as a NumPy array.
-    """
+    """Extracts a frame from the video."""
     cap = cv2.VideoCapture(video_source)
     if not cap.isOpened():
         raise Exception("Error opening video file or stream")
@@ -118,38 +78,18 @@ def get_frame_from_video(video_source, frame_number=0):
         raise Exception("Could not read frame from video")
     return frame
 
-
 def image_to_base64(frame, target_size=(64, 64), jpeg_quality=50):
-    """
-    Resize and compress the frame to reduce prompt length,
-    then encode it as a base64 JPEG string.
-    """
-    # Resize the frame to a small thumbnail to reduce token usage
+    """Converts a frame to a base64-encoded JPEG string."""
     resized_frame = cv2.resize(frame, target_size)
-
-    # Compress the image with a specified JPEG quality
     encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), jpeg_quality]
     success, buffer = cv2.imencode('.jpg', resized_frame, encode_param)
     if not success:
         raise Exception("Failed to encode image")
-    # Return the base64-encoded string
     return base64.b64encode(buffer).decode("utf-8")
 
-
 def get_fire_risk(lat, lon, frame):
-    """
-    Uses geographic coordinates and a video frame (automatically extracted)
-    to ask the multimodal Chat API to classify the fire risk.
-
-    It sends a message with a text portion (including the coordinates and instructions)
-    and an image portion (with the base64-encoded image) using the new message format.
-
-    The response should be one word: either "High", "Moderate", or "Low".
-    """
-    # Convert the frame to a compressed base64-encoded JPEG string
+    """Uses OpenAI GPT-4 to classify fire risk based on coordinates and frame."""
     base64_image = image_to_base64(frame)
-
-    # Build the text part of the prompt
     prompt_text = (
         "You are an expert fire risk assessor. Evaluate the following information:\n"
         f" - Latitude: {lat}\n"
@@ -157,10 +97,8 @@ def get_fire_risk(lat, lon, frame):
         "Based on these coordinates and the image provided, classify the fire risk for this area.\n"
         "Return only one word: High, Moderate, or Low."
     )
-
-    # Call the Chat API with a multimodal message
     response = client.chat.completions.create(
-        model="gpt-4o-mini",  # Use the appropriate multimodal model
+        model="gpt-4o-mini",
         messages=[
             {
                 "role": "user",
@@ -171,19 +109,43 @@ def get_fire_risk(lat, lon, frame):
             }
         ]
     )
-
-    # Extract and return the assistant's answer
     return response.choices[0].message.content.strip()
 
+def generate_wildfire_report(video_source, coordinates, json_file_path="wildfire_report.json"):
+    # Unpack the coordinates tuple
+    lat, lon = coordinates
 
-# Example usage:
-video_source = "Fire.mp4"  # Path to your video file
-# Automatically extract a frame (e.g., the first frame)
-frame = get_frame_from_video(video_source, frame_number=0)
+    fire_detected = detect_fire_and_smoke(video_source)
 
-# Example coordinates (latitude and longitude)
-latitude = 37.7749  # e.g., San Francisco
-longitude = -122.4194
+    weather_data = get_weather_and_aqi(lat, lon)
 
-risk_level = get_fire_risk(latitude, longitude, frame)
-print(f"Fire Risk: {risk_level}")
+    frame = get_frame_from_video(video_source, frame_number=0)
+    risk_level = get_fire_risk(lat, lon, frame)
+
+    report = {
+        "fire": fire_detected,
+        "risk": risk_level.lower(),  # "high", "moderate", or "low"
+        "temp": weather_data['temp'],
+        "wind_str": weather_data['wind_str'],
+        "wind_dir": weather_data['wind_dir'],
+        "humidity": weather_data['humidity'],
+        "aqi": weather_data['aqi'],
+        "pressure": weather_data['pressure'],
+        "visibility": weather_data['visibility'],
+        "precipitation": weather_data['precipitation'],
+        "timestamp": datetime.now().isoformat()
+    }
+
+    with open(json_file_path, "w") as f:
+        json.dump(report, f, indent=4)
+    print(f"Wildfire report saved to {json_file_path}")
+
+    return report
+
+# Example usage
+video_source = "Fire.mp4"
+latitude = 34.0522
+longitude = -118.2437
+
+report = generate_wildfire_report(video_source, latitude, longitude)
+print(report)
