@@ -70,7 +70,7 @@ export default function RootLayout({
                 width={60}
                 height={60}
               />
-              <h1 className="text-2xl text-neutral-300 font-bold">LIT</h1>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-white to-orange-400 bg-clip-text text-transparent">GeoSpark</h1>
             </div>
             <Nav />
             {!isLoggedIn && (
