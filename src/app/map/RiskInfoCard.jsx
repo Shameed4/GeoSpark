@@ -15,7 +15,7 @@ export default function RiskInfoCard({
     return (
         <div className="absolute w-80 right-4 top-4 z-10 bg-neutral-950 p-4 rounded shadow-md text-white">
             <div onClick={onClose} className="cursor-pointer flex items-center gap-1">
-                <X />
+                <X className="m-3" />
             </div>
             <div className="bg-gradient-to-br from-red-50 to-red-500 p-5 rounded-md">
                 <h4 className="text-sm">{location}</h4>
