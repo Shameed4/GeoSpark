@@ -15,7 +15,32 @@ export default function AI() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const handleSubmit = (e) => {
+  const fetchAIResponse = async (userMessage) => {
+    try {
+      const response = await fetch("http://127.0.0.1:5000/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ question: userMessage }),
+      });
+
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
+        const data = await response.json();
+        return data.answer || "I'm not sure how to respond to that.";
+      } else {
+        const text = await response.text();
+        return `Unexpected response: ${text}`;
+      }
+    } catch (error) {
+      console.error("Error fetching AI response:", error);
+      return "Sorry, something went wrong.";
+    }
+  };
+
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!message.trim()) return;
 
@@ -23,15 +48,17 @@ export default function AI() {
       ...prevMessages,
       { text: message, sender: "user" },
     ]);
+
+    const userMessage = message;
     setMessage("");
 
-    // Simulate an AI response after a brief delay
-    setTimeout(() => {
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { text: "I can help with wildfire information!", sender: "ai" },
-      ]);
-    }, 1000);
+    // Fetch AI response
+    const aiResponse = await fetchAIResponse(userMessage);
+
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      { text: aiResponse, sender: "ai" },
+    ]);
   };
 
   return (
@@ -65,7 +92,6 @@ export default function AI() {
           <div ref={messagesEndRef} />
         </div>
       </main>
-
 
       {/* Input */}
       <footer className="w-full max-w-4xl">
