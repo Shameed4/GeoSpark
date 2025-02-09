@@ -52,6 +52,7 @@ export default function Upload() {
         for (const key of Object.keys(data)) {
           const geoResponse = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${key.split(",")[0]}&lon=${key.split(",")[1]}&format=json`);
           const geoData = await geoResponse.json();
+          data[key].address = await getPlaceName(key)
           if (geoData["error"])
             data[key].placeName = "Invalid location";
           else
@@ -125,7 +126,7 @@ export default function Upload() {
                 <div className="p-4">
                   <h3 className="text-xl font-bold">{report.placeName}</h3>
                   <div className="flex items-center text-gray-400 mt-2">
-                    <span>{coords}</span>
+                    <span>{report.address}</span>
                   </div>
                   <p className="text-sm text-gray-500 mt-3">Last Updated: {report["time"]}</p>
                   <button
