@@ -1,18 +1,32 @@
-"use client"
+"use client";
 import React, { useState } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { auth, provider } from '../googleSignin/config';
+import { signInWithPopup } from 'firebase/auth';
 
-const Login = () => {
+export default function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const router = useRouter();
 
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log('Logged with:', { email, password });
     };
 
-    const handleGoogleLogin= () => {
-        console.log('Login with Google');
+    const handleGoogleLogin = () => {
+        signInWithPopup(auth, provider)
+            .then((data) => {
+                console.log('Google Sign-In Success:', data.user.email);
+                localStorage.setItem('email', data.user.email);
+                localStorage.setItem('isLoggedIn', 'true'); // Set login status
+                window.dispatchEvent(new Event('storage')); // Trigger global update
+                router.push('/'); // Redirect to homepage
+            })
+            .catch((error) => {
+                console.error('Google Sign-In Error:', error);
+            });
     };
 
     return (
@@ -26,7 +40,7 @@ const Login = () => {
                 <h2 className="text-white text-2xl font-bold mb-6 text-center">Login</h2>
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div>
-                        <label htmlFor="email" className="text-white block text-sm font-medium text-gray-700">Email</label>
+                        <label htmlFor="email" className="text-white block text-sm font-medium">Email</label>
                         <input
                             type="email"
                             id="email"
@@ -38,7 +52,7 @@ const Login = () => {
                         />
                     </div>
                     <div>
-                        <label htmlFor="password" className="text-white block text-sm font-medium text-gray-700">Password</label>
+                        <label htmlFor="password" className="text-white block text-sm font-medium">Password</label>
                         <input
                             type="password"
                             id="password"
@@ -52,7 +66,7 @@ const Login = () => {
                     </div>
                     <button
                         type="submit"
-                        className="bg-[#313131] w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white  hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:gray-500"
+                        className="bg-[#313131] w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2"
                     >
                         Login
                     </button>
@@ -64,7 +78,7 @@ const Login = () => {
                 </div>
                 <button
                     onClick={handleGoogleLogin}
-                    className="w-full mt-4 flex items-center justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:gray-500"
+                    className="w-full mt-4 flex items-center justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2"
                 >
                     <Image
                         src="/Google.png"
@@ -79,5 +93,3 @@ const Login = () => {
         </div>
     );
 };
-
-export default Login;
