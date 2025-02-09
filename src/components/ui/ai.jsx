@@ -88,7 +88,9 @@ export default function AI() {
                 <div>
                   <p className="text-xs text-white/60 mb-1">YOU</p>
                   <div className="flex items-center p-3 bg-gray-600 text-white rounded-xl text-sm">
-                    <User className="w-5 h-5 text-white mr-2" />
+                    <div className="w-8 h-8 flex items-center justify-center mr-2">
+                      <User className="w-5 h-5 text-white" />
+                    </div>
                     <span>{msg.text}</span>
                   </div>
                 </div>
@@ -96,7 +98,9 @@ export default function AI() {
                 <div>
                   <p className="text-xs text-white/60 mb-1 self-end">AI</p>
                   <div className="flex items-center p-3 bg-gray-700 text-white rounded-xl text-sm">
-                    <Bot className="w-5 h-5 text-white mr-2" />
+                    <div className="w-8 h-8 flex items-center justify-center mr-2">
+                      <Bot className="w-5 h-5 text-white" />
+                    </div>
                     <span>{msg.text}</span>
                   </div>
                 </div>

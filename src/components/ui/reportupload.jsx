@@ -3,51 +3,21 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import UploadButton from "../uploadComponent";
 import { getPlaceName } from "@/app/utils";
+import Link from "next/link";
 
 export default function Upload() {
   const [reports, setReports] = useState({});
 
   useEffect(() => {
-    async function fetchReport() {
+    async function fetchReports() {
       try {
-        // const response = await fetch('/api/report', {
-        //   method: 'GET',
-        // });
-
-        // if (!response.ok) {
-        //   console.log("Error fetching data");
-        //   throw new Error(`HTTP error! Status: ${response.status}`);
-        // }
+        const response = await fetch('http://127.0.0.1:5000/api/all-data', {
+          method: 'GET',
+        });
+        console.log(response);
         console.log("Successful fetching data");
-        // const data = await response.json();
-        const data = {
-          "34.0522,-118.2437": {
-            "fire": true,
-            "risk": "high",
-            "temp": 53.01,
-            "wind_str": 3.44,
-            "wind_dir": 60,
-            "humidity": 78,
-            "aqi": 2,
-            "pressure": 1017,
-            "visibility": 10000,
-            "precipitation": 0,
-            "timestamp": "2025-02-09T01:31:39.137897"
-          },
-          "37.7749,-122.4194": {
-            "fire": true,
-            "risk": "high",
-            "temp": 46.47,
-            "wind_str": 4.61,
-            "wind_dir": 290,
-            "humidity": 78,
-            "aqi": 2,
-            "pressure": 1025,
-            "visibility": 10000,
-            "precipitation": 0,
-            "timestamp": "2025-02-09T01:32:58.568582"
-          }
-        }
+        const data = await response.json();
+        console.log(data);
         console.log("Running for loop");
         for (const key of Object.keys(data)) {
           const geoResponse = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${key.split(",")[0]}&lon=${key.split(",")[1]}&format=json`);
@@ -74,7 +44,7 @@ export default function Upload() {
         console.error("Error fetching report:", error);
       }
     }
-    fetchReport();
+    fetchReports();
   }, [])
 
   const toggleHeart = (reportId) => {
@@ -86,24 +56,18 @@ export default function Upload() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-[#111219] text-white p-8">
-      <div className="relative rounded-lg overflow-hidden mb-8 h-80">
-        <Image
-          src="/uploadbg.jpeg"
-          alt="Hero"
-          layout="fill"
-          objectFit="cover"
-          priority
-        />
+    <div className="min-h-screen h-screen w-full bg-[#111219] text-white p-8 overflow-y-auto">
+      <div className="relative rounded-lg overflow-hidden mb-8 min-h-80" style={{ backgroundImage: 'url(/uploadbg.jpeg)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
         <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black"></div>
         <div className="absolute inset-0 flex flex-col justify-center items-center text-center px-4">
           <h1 className="drop-shadow-[0_2px_2px_rgba(0,0,0,0.4)] text-4xl font-bold mb-2">
-            Generate a Report For An Undocumented Wildfire Near You
+            Generate a Report For An Undocumented Wildfire
           </h1>
           <p className="text-gray-300 mb-6">Accepted Video Formats: .MP4, .MOV, .M4V</p>
           <UploadButton />
         </div>
       </div>
+
       <div>
         <h2 className="text-2xl font-bold mb-3">Recent Fires</h2>
         <div className="grid grid-cols-3 gap-6">
@@ -117,7 +81,7 @@ export default function Upload() {
                 <div className="relative w-full h-48">
                   <Image
                     src={"/palisadesfire.jpeg"}
-                    alt={report.county}
+                    alt={"Image"}
                     layout="fill"
                     objectFit="cover"
                     className="rounded-t-lg"
@@ -129,14 +93,14 @@ export default function Upload() {
                     <span>{report.address}</span>
                   </div>
                   <p className="text-sm text-gray-500 mt-3">Last Updated: {report["time"]}</p>
-                  <button
-                    className="w-full mt-4 py-2 rounded-lg font-bold 
+                  <Link href={`/report/results/${coords}`}>
+                    <button className="w-full mt-4 py-2 rounded-lg font-bold 
                                  bg-gray-700 text-white
                                  transition-colors transition-transform duration-300 ease-in-out 
-                                 hover:scale-105 active:scale-95"
-                  >
-                    View Details
-                  </button>
+                                 hover:scale-105 active:scale-95">
+                      View Details
+                    </button>
+                  </Link>
                 </div>
                 <div
                   className="absolute top-3 right-3 cursor-pointer"

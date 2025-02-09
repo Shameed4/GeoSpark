@@ -33,6 +33,14 @@ const pollutants = [
 
 const nearbyFires = [
   {
+    location: "Riverside",
+    cause: "Dry Conditions",
+    type: "Fire",
+    start: "Jan. 23",
+    distance: "2,755.3",
+    status: "Ongoing",
+  },
+  {
     location: "San Diego",
     cause: "Dry Conditions",
     type: "Fire",
@@ -46,6 +54,14 @@ const nearbyFires = [
     type: "Fire",
     start: "Jan. 7",
     distance: "2,789.1",
+    status: "Resolved",
+  },
+  {
+    location: "San Bernardino",
+    cause: "Unknown",
+    type: "Fire",
+    start: "Jan. 15",
+    distance: "2,845.2",
     status: "Resolved",
   },
   {
@@ -113,7 +129,7 @@ export default function Home() {
   }, [location]);
 
   return (
-    <div className="w-full overflow-x-hidden">
+    <div className="w-full h-screen overflow-x-hidden overflow-y-auto">
       <header className="bg-cover h-52" style={{
         backgroundImage: `linear-gradient(90deg, black 0%, gray 20%, #ce5217 60%, #7a2800 100%), url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='200'%20height='200'%20viewBox='0%200%20200%20200'%3E%3Cfilter%20id='noise'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='10'%20numOctaves='2'%20stitchTiles='stitch'/%3E%3C/filter%3E%3Crect%20width='200'%20height='200'%20filter='url(%23noise)'/%3E%3C/svg%3E")`,
         backgroundBlendMode: "overlay",
@@ -155,11 +171,31 @@ export default function Home() {
             </p>
           </div>
           <div className={cn(blockClass, "w-[60%]")}>
-            <div className="flex">
+            <div className="flex mb-3">
               <TextSearch className="mr-2 mb-2" />
               <h4 className="text-lg mr-auto">Analytics</h4>
-              <TimeOptions />
+              { /* <TimeOptions /> */ }
             </div>
+            <table className="w-full text-left text-neutral-300">
+              <tbody>
+                <tr className="border-b border-gray-600">
+                  <td className="py-2 px-3 font-semibold text-white">US Homes at Risk</td>
+                  <td className="py-2 px-3">2.6 Million</td>
+                </tr>
+                <tr className="border-b border-gray-600">
+                  <td className="py-2 px-3 font-semibold text-white">States Affected/At Risk</td>
+                  <td className="py-2 px-3">14 States</td>
+                </tr>
+                <tr className="border-b border-gray-600">
+                  <td className="py-2 px-3 font-semibold text-white">Cause of Wildfires</td>
+                  <td className="py-2 px-3">85% Human, 15% Natural (Lava, Lightning)</td>
+                </tr>
+                <tr className="border-b border-gray-600">
+                  <td className="py-2 px-3 font-semibold text-white">Wildfires (2025)</td>
+                  <td className="py-2 px-3">1,248 Fires, 59,260 Acres Burned</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
 
@@ -179,7 +215,7 @@ type NearbyFiresTableProps = {
 function NearbyFiresTable({ sortOption, setSortOption }: NearbyFiresTableProps) {
   return (
     <div className="w-full bg-gradient-to-br from-black/50 to-transparent/50 backdrop-blur-md rounded-lg p-6">
-      <table className="w-full text-left text-neutral-300 border-separate border-spacing-y-2 mb-[-30px]">
+      <table className="w-full text-left text-neutral-300 border-separate border-spacing-y-2 mb-[35px]">
         <thead>
           <tr>
             <th
