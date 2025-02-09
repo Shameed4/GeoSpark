@@ -14,7 +14,7 @@ FIRE_CLASS_NAME = "fire"
 SMOKE_CLASS_NAME = "smoke"
 
 # Initialize OpenAI client
-client = OpenAI(api_key='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')
+client = OpenAI(api_key='API-KEY')
 
 def detect_fire_and_smoke(video_source):
     """Detects fire and smoke in the video and returns True if detected."""
@@ -46,7 +46,7 @@ def detect_fire_and_smoke(video_source):
 
 def get_weather_and_aqi(lat, lon):
     """Fetches weather and air quality data using OpenWeatherMap API."""
-    api_key = "832ce1e9aa05f42e713ea690076b99c6"
+    api_key = "API-KEY"
     url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={api_key}&units=imperial"
     url2 = f"http://api.openweathermap.org/data/2.5/air_pollution/forecast?lat={lat}&lon={lon}&appid={api_key}"
     response = requests.get(url).json()
