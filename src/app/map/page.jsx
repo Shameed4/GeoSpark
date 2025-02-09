@@ -231,7 +231,7 @@ export default function MapPage() {
                     (point) =>
                         point.length === 2 && !isNaN(point[0]) && !isNaN(point[1])
                 )
-                .map((point) => `${point[0]} ${point[1]}`)
+                .map((point) => `point(${point[0]} ${point[1]})`)
                 .join(",");
         }
         const baseUrl = `https://api.mapbox.com/directions/v5/mapbox/driving/${start[0]},${start[1]};${end[0]},${end[1]}`;
@@ -329,9 +329,23 @@ export default function MapPage() {
         const endAddress = form.elements["end-address"].value;
         const useExclusions = form.elements["exclude-checkbox"].checked;
 
-        // Hard-coded avoid point(s) in [lon, lat] order.
-        const avoidPoints = [[-118.20695444568196, 33.79677470884872]];
-        const pointsToExclude = useExclusions ? avoidPoints : [];
+        let pointsToExclude = [];
+
+        if (useExclusions) {
+            try {
+                const response = await fetch('http://127.0.0.1:5000/api/coords-risk');
+                if (response.ok) {
+                    const data = await response.json();
+                    // Map over the returned data to extract the coordinates ([lng, lat])
+                    pointsToExclude = data.map(item => item.coordinates);
+                    console.log(pointsToExclude)
+                } else {
+                    console.error('Failed to fetch risk coordinates:', response.statusText);
+                }
+            } catch (error) {
+                console.error('Error fetching risk coordinates:', error);
+            }
+        }
 
         const startCoords = await getCoordinates(startAddress);
         const endCoords = await getCoordinates(endAddress);
@@ -343,6 +357,7 @@ export default function MapPage() {
             getRoute(start, end, pointsToExclude);
         }
     }
+
 
     return (
         <div className="relative h-screen w-full">
