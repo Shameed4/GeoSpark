@@ -155,11 +155,31 @@ export default function Home() {
             </p>
           </div>
           <div className={cn(blockClass, "w-[60%]")}>
-            <div className="flex">
+            <div className="flex mb-3">
               <TextSearch className="mr-2 mb-2" />
               <h4 className="text-lg mr-auto">Analytics</h4>
-              <TimeOptions />
+              { /* <TimeOptions /> */ }
             </div>
+            <table className="w-full text-left text-neutral-300">
+              <tbody>
+                <tr className="border-b border-gray-600">
+                  <td className="py-2 px-3 font-semibold text-white">US Homes at Risk</td>
+                  <td className="py-2 px-3">2.6 Million</td>
+                </tr>
+                <tr className="border-b border-gray-600">
+                  <td className="py-2 px-3 font-semibold text-white">States Affected/At Risk</td>
+                  <td className="py-2 px-3">14 States</td>
+                </tr>
+                <tr className="border-b border-gray-600">
+                  <td className="py-2 px-3 font-semibold text-white">Cause of Wildfires</td>
+                  <td className="py-2 px-3">85% Human, 15% Natural (Lava, Lightning)</td>
+                </tr>
+                <tr className="border-b border-gray-600">
+                  <td className="py-2 px-3 font-semibold text-white">Wildfires (2025)</td>
+                  <td className="py-2 px-3">1,248 Fires, 59,260 Acres Burned</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
 

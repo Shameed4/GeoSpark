@@ -72,59 +72,64 @@ export default function UploadButton() {
         className="hidden"
         accept=".mp4,.mov,.m4v"
       />
-      <button
-        onClick={triggerFileInput}
-        className="flex items-center justify-center gap-2 px-6 py-3 text-white font-semibold rounded-xl 
-                   bg-gradient-to-r from-white to-orange-500 
-                   hover:from-orange-400 hover:to-orange-600
-                   transition-colors transition-transform duration-300 ease-in-out 
-                   hover:scale-105 active:scale-95 shadow-lg"
-      >
-        <span className="drop-shadow-[0_2px_2px_rgba(0,0,0,0.4)]">Upload File</span>
-        <Image
-          src={"/ai.png"}
-          alt={"AI"}
-          width={15}
-          height={15}
-          className="mb-1"
-        />
-      </button>
-
       {/* Show the file name if a file is selected */}
       {fileName && (
         <p className="mt-2 text-sm text-gray-700">Selected File: {fileName}</p>
       )}
 
-      <div className="mt-4 flex flex-col gap-2">
+      <div className="mt-4 flex flex-row gap-4">
         <input
           type="number"
           placeholder="Latitude"
           value={latitude}
           onChange={handleLatitudeChange}
-          className="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500"
+          className="px-4 py-2 w-48 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500"
         />
         <input
           type="number"
           placeholder="Longitude"
           value={longitude}
           onChange={handleLongitudeChange}
-          className="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500"
+          className="px-4 py-2 w-48 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500"
         />
       </div>
 
-      <button
-        onClick={handleSubmit}
-        disabled={uploading}
-        className="mt-4 flex items-center justify-center gap-2 px-6 py-3 text-white font-semibold rounded-xl 
-                   bg-gradient-to-r from-white to-green-500 
-                   hover:from-green-400 hover:to-green-600
-                   transition-colors transition-transform duration-300 ease-in-out 
-                   hover:scale-105 active:scale-95 shadow-lg"
-      >
-        <span className="drop-shadow-[0_2px_2px_rgba(0,0,0,0.4)]">
-          {uploading ? "Uploading..." : "Submit"}
-        </span>
-      </button>
+      <div className="mt-6 flex flex-row gap-4">
+        {/* Upload File Button */}
+        <button
+          onClick={triggerFileInput}
+          className="flex items-center justify-center gap-2 px-6 py-3 text-white font-semibold rounded-xl 
+               bg-gradient-to-r from-white to-orange-500 
+               hover:from-orange-400 hover:to-orange-600
+               transition-colors transition-transform duration-300 ease-in-out 
+               hover:scale-105 active:scale-95 shadow-lg"
+        >
+          <span className="drop-shadow-[0_2px_2px_rgba(0,0,0,0.4)]">Upload File</span>
+        </button>
+
+        {/* Submit Button */}
+        <button
+          onClick={handleSubmit}
+          disabled={uploading}
+          className="flex items-center justify-center gap-2 px-6 py-3 text-white font-semibold rounded-xl 
+               bg-gradient-to-r from-white to-green-500 
+               hover:from-green-400 hover:to-green-600
+               transition-colors transition-transform duration-300 ease-in-out 
+               hover:scale-105 active:scale-95 shadow-lg"
+        >
+          <span className="drop-shadow-[0_2px_2px_rgba(0,0,0,0.4)]">
+            {uploading ? "Uploading..." : "Submit"}
+          </span>
+          <Image
+            src={"/ai.png"}
+            alt={"AI"}
+            width={15}
+            height={15}
+            className="mb-1"
+          />
+        </button>
+      </div>
+
 
       {message && <p className="mt-2 text-sm text-gray-700">{message}</p>}
     </div>
