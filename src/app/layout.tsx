@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, ABeeZee, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Nav from "@/components/nav";
-import { ChevronRight, Search } from "lucide-react";
+import { ChevronRight, Search, Lightbulb } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 const geistSans = Geist({
@@ -14,6 +14,8 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+
+const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -28,7 +30,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#0E1018]`}
+        className={`${inter.className} antialiased bg-[#0E1018]`}
       >
         <div className="flex min-h-[100vh]">
           <div className="flex flex-col p-10 gap-7 w-80 border-r-neutral-800 border-r-[1px]">

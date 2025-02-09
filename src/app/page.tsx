@@ -1,8 +1,11 @@
 'use client'
-import { ArrowUpRight } from "lucide-react";
+
+import { ArrowUpRight, Lightbulb } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
 import TimeOptions from "@/components/timeOptions";
+import Table from "@/components/table";
+import Weather from "@/components/weather"
+import { useState } from "react";
 
 const blockClass =
   "w-[30%] h-40 bg-gradient-to-br from-black to-transparent rounded-md text-neutral-200 p-3";
@@ -113,7 +116,11 @@ export default function Home() {
   );
 }
 
-function NearbyFiresTable({ sortOption, setSortOption }) {
+type NearbyFiresTableProps = {
+  sortOption: string,
+  setSortOption: (option: string) => void
+}
+function NearbyFiresTable({ sortOption, setSortOption }: NearbyFiresTableProps) {
   return (
     <div className="w-full bg-gradient-to-br from-black/50 to-transparent/50 backdrop-blur-md rounded-lg p-6">
       <table className="w-full text-left text-neutral-300 border-separate border-spacing-y-2 mb-[-30px]">
@@ -183,7 +190,7 @@ function NearbyFiresTable({ sortOption, setSortOption }) {
   );
 }
 
-function getStatusStyle(status) {
+function getStatusStyle(status : string) {
   switch (status) {
     case "Resolved":
       return "bg-green-800 text-green-300";
@@ -196,7 +203,14 @@ function getStatusStyle(status) {
   }
 }
 
-function InfoCard({ title, value, change, negative }) {
+type InfoCard = {
+  title: string,
+  value: string, 
+  change: string,
+  negative?: boolean
+}
+
+function InfoCard({ title, value, change, negative } : InfoCard) {
   return (
     <div className={blurBlockClass}>
       <h4>{title}</h4>
