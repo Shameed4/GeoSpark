@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from "react";
-import { ArrowUpRight, Lightbulb, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowUpRight, Lightbulb, ChevronLeft, ChevronRight, MapPinHouse, LucideIcon, Droplets, CloudFog, TextSearch, Flame } from "lucide-react";
 import { cn } from "@/lib/utils";
 import TimeOptions from "@/components/timeOptions";
 
@@ -126,14 +126,17 @@ export default function Home() {
               Overview
             </h1>
           </div>
-          <InfoCard title={city} value={aqi || "Loading..."} change={aqiChange || "..."} miniText={"Wildfires worsen air quality by releasing smoke and harmful particles into the air."}/>
-          <InfoCard title="Humidity" value={humidity || "Loading..."} change={humidityChange || "..."} negative miniText={"Low humidity increases wildfire risk by drying out plants, while high humidity helps prevent fires."} />
+          <InfoCard title={city} value={aqi || "Loading..."} change={aqiChange || "..."} miniText={"Wildfires worsen air quality by releasing smoke and harmful particles into the air."} icon={MapPinHouse} />
+          <InfoCard title="Humidity" value={humidity || "Loading..."} change={humidityChange || "..."} negative miniText={"Low humidity increases wildfire risk by drying out plants, while high humidity helps prevent fires."} icon={Droplets} />
           <TipCard />
         </div>
 
         <div className="my-10 flex w-full justify-between">
           <div className={cn(blockClass, "w-[35%]")}>
-            <h4 className="text-lg">Pollutants</h4>
+            <div className="flex">
+              <CloudFog className="mr-2 mb-2" />
+              <h4>Pollutants</h4>
+            </div>
             <div className="mt-3 mb-5 flex flex-wrap gap-2">
               {pollutants.map(({ label, sub }) => (
                 <div
@@ -153,6 +156,7 @@ export default function Home() {
           </div>
           <div className={cn(blockClass, "w-[60%]")}>
             <div className="flex">
+              <TextSearch className="mr-2 mb-2" />
               <h4 className="text-lg mr-auto">Analytics</h4>
               <TimeOptions />
             </div>
@@ -182,7 +186,10 @@ function NearbyFiresTable({ sortOption, setSortOption }: NearbyFiresTableProps) 
               colSpan={6}
               className="pl-3 pr-6 py-4 text-xl text-neutral-200 flex items-center mt-[-30px]"
             >
-              Major Fires
+              <div className="flex">
+                <Flame className="mr-2 mb-2" />
+                <h4>Major Fires</h4>
+              </div>
               <select
                 className="bg-neutral-800 text-neutral-300 text-sm p-2 rounded-md ml-auto border-r-[16px] border-r-transparent"
                 value={sortOption}
@@ -255,10 +262,13 @@ function getStatusStyle(status: string) {
   }
 }
 
-function InfoCard({ title, value, change, negative, miniText }: { title: string, value: string, change: string, negative?: boolean, miniText?: string;}) {
+function InfoCard({ title, value, change, negative, miniText, icon: Icon }: { title: string, value: string, change: string, negative?: boolean, miniText?: string; icon: LucideIcon; }) {
   return (
     <div className={blurBlockClass}>
-      <h4>{title}</h4>
+      <div className="flex">
+        <Icon className="mr-2 mb-2" />
+        <h4>{title}</h4>
+      </div>
       <h3 className="mt-[10px] text-lg">{value}</h3>
       <div className="flex items-center">
         <div className={`mt-[10px] flex items-center ${negative ? "text-[#EB6B6B] bg-[rgba(102,38,38,0.2)]" : "text-[#6BEBA4] bg-[rgba(38,102,99,0.2)]"} px-2 py-1 rounded-3xl`}>
