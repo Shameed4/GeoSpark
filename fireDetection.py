@@ -146,6 +146,7 @@ def generate_wildfire_report(video_source, coordinates, json_file_path="wildfire
 video_source = "Fire.mp4"
 latitude = 34.0522
 longitude = -118.2437
+coordinates = (34.0522, -118.2437)
 
-report = generate_wildfire_report(video_source, latitude, longitude)
+report = generate_wildfire_report(video_source, coordinates)
 print(report)
