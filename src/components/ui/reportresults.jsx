@@ -7,7 +7,7 @@ export default function Reports() {
   const [isLiked, setIsLiked] = useState(false);
 
   return (
-    <div className="w-full flex flex-col lg:flex-row min-h-screen">
+    <div className="w-full h-screen overflow-y-auto flex flex-col lg:flex-row min-h-screen">
       {/* Report */}
       <div className="lg:basis-[70%] flex-1 relative z-10">
         <div className="p-6"> {/* Location Name */}

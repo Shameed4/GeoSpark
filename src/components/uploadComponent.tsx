@@ -112,8 +112,8 @@ export default function UploadButton() {
           onClick={handleSubmit}
           disabled={uploading}
           className="flex items-center justify-center gap-2 px-6 py-3 text-white font-semibold rounded-xl 
-               bg-gradient-to-r from-white to-green-500 
-               hover:from-green-400 hover:to-green-600
+          bg-gradient-to-r from-orange-500 to-white
+          hover:from-orange-400 hover:to-orange-600
                transition-colors transition-transform duration-300 ease-in-out 
                hover:scale-105 active:scale-95 shadow-lg"
         >

@@ -85,7 +85,7 @@ export default function Upload() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-[#111219] text-white p-8">
+    <div className="min-h-screen h-screen w-full bg-[#111219] text-white p-8 overflow-y-auto">
       <div className="relative rounded-lg overflow-hidden mb-8 min-h-80" style={{ backgroundImage: 'url(/uploadbg.jpeg)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
         <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black"></div>
         <div className="absolute inset-0 flex flex-col justify-center items-center text-center px-4">
