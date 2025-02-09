@@ -20,6 +20,7 @@ export default function Upload() {
         console.log(data);
         console.log("Running for loop");
         for (const key of Object.keys(data)) {
+          console.log(`Calling ${`https://nominatim.openstreetmap.org/reverse?lat=${key.split(",")[0]}&lon=${key.split(",")[1]}&format=json`}`)
           const geoResponse = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${key.split(",")[0]}&lon=${key.split(",")[1]}&format=json`);
           const geoData = await geoResponse.json();
           data[key].address = await getPlaceName(key)
