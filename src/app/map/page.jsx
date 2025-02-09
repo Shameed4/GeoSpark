@@ -319,7 +319,7 @@ export default function MapPage() {
     }
 
     return (
-        <div className="relative h-screen w-full">
+        <div className="relative h-screen w-full overflow-hidden">
             {/* Route Settings Form (always visible) */}
             <div className="absolute w-80 right-4 top-4 z-10 bg-[#0E1018] p-4 rounded shadow-md text-white">
                 <h4 className="text-lg font-bold mb-2">Route Settings</h4>

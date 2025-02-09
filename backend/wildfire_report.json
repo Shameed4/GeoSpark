@@ -28,14 +28,14 @@
     "47.6062,-122.3321": {
         "fire": true,
         "risk": "high",
-        "temp": 36.37,
+        "temp": 34.7,
         "wind_str": 4.61,
-        "wind_dir": 140,
-        "humidity": 91,
-        "aqi": 1,
-        "pressure": 1031,
+        "wind_dir": 120,
+        "humidity": 93,
+        "aqi": 2,
+        "pressure": 1032,
         "visibility": 10000,
-        "precipitation": 0.49,
-        "timestamp": "2025-02-09T02:10:13.510596"
+        "precipitation": 0.25,
+        "timestamp": "2025-02-09T05:14:00.057125"
     }
 }
