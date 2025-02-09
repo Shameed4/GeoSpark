@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import UploadButton from "../uploadComponent";
+import { getPlaceName } from "@/app/utils";
 
 export default function Upload() {
   const [reports, setReports] = useState({});
@@ -47,7 +48,26 @@ export default function Upload() {
             "timestamp": "2025-02-09T01:32:58.568582"
           }
         }
-        console.log(data);
+        console.log("Running for loop");
+        for (const key of Object.keys(data)) {
+          const geoResponse = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${key.split(",")[0]}&lon=${key.split(",")[1]}&format=json`);
+          const geoData = await geoResponse.json();
+          if (geoData["error"])
+            data[key].placeName = "Invalid location";
+          else
+            data[key].placeName = geoData.address.city || geoData.address.town || geoData.address.village || "Unknown Location";
+          const timestamp = new Date(data[key]["timestamp"]);
+          const formattedDate = timestamp.toLocaleString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true,
+          });
+          console.log(formattedDate)
+          data[key].time = formattedDate
+        }
         setReports(data);
       } catch (error) {
         console.error("Error fetching report:", error);
@@ -66,14 +86,7 @@ export default function Upload() {
 
   return (
     <div className="min-h-screen w-full bg-[#111219] text-white p-8">
-      <div className="relative rounded-lg overflow-hidden mb-8 h-80">
-        <Image
-          src="/uploadbg.jpeg"
-          alt="Hero"
-          layout="fill"
-          objectFit="cover"
-          priority
-        />
+      <div className="relative rounded-lg overflow-hidden mb-8 min-h-80" style={{ backgroundImage: 'url(/uploadbg.jpeg)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
         <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black"></div>
         <div className="absolute inset-0 flex flex-col justify-center items-center text-center px-4">
           <h1 className="drop-shadow-[0_2px_2px_rgba(0,0,0,0.4)] text-4xl font-bold mb-2">
@@ -83,6 +96,7 @@ export default function Upload() {
           <UploadButton />
         </div>
       </div>
+
       <div>
         <h2 className="text-2xl font-bold mb-3">Recent Fires</h2>
         <div className="grid grid-cols-3 gap-6">
@@ -103,11 +117,11 @@ export default function Upload() {
                   />
                 </div>
                 <div className="p-4">
-                  <h3 className="text-xl font-bold">{report.county}</h3>
-                  <div className="flex items-center text-gray-400 mt-2">
+                  <h3 className="text-xl font-bold">{report.placeName}</h3>
+                  <div className="text-gray-400 mt-2">
                     <span>{coords}</span>
                   </div>
-                  <p className="text-sm text-gray-500 mt-3">Last Updated: {report["timestamp"]}</p>
+                  <p className="text-sm text-gray-500 mt-3">Last Updated: {report["time"]}</p>
                   <button
                     className="w-full mt-4 py-2 rounded-lg font-bold 
                                  bg-gray-700 text-white

@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import RiskInfoCard from "./RiskInfoCard";
 import moment from 'moment';
+import { getPlaceName } from "../utils";
+import { mapboxgl } from "../utils";
 
 // Set your Mapbox access token
 mapboxgl.accessToken =
@@ -183,33 +184,6 @@ export default function MapPage() {
         }
     }
 
-    // Reverse geocoding: Get a place name from a "lat,lon" string
-    async function getPlaceName(location) {
-        // Expecting location as a string "latitude,longitude", e.g., "34.0522,-118.2437"
-        const [latStr, lngStr] = location.split(",");
-        const latitude = parseFloat(latStr.trim());
-        const longitude = parseFloat(lngStr.trim());
-
-        // Mapbox expects coordinates as "longitude,latitude"
-        const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${longitude},${latitude}.json?access_token=${mapboxgl.accessToken}`;
-
-        try {
-            const response = await fetch(url);
-            const data = await response.json();
-
-            if (data.features && data.features.length > 0) {
-                // Return the human-readable place name from the first feature.
-                return data.features[0].place_name;
-            } else {
-                alert(`No address found for coordinates: ${location}`);
-                return null;
-            }
-        } catch (error) {
-            console.error("Error fetching address:", error);
-            return null;
-        }
-    }
-
     // Use an effect to update the place name whenever riskData changes
     useEffect(() => {
         if (riskData && riskData.location) {
@@ -231,7 +205,7 @@ export default function MapPage() {
                     (point) =>
                         point.length === 2 && !isNaN(point[0]) && !isNaN(point[1])
                 )
-                .map((point) => `${point[0]} ${point[1]}`)
+                .map((point) => `point(${point[0]} ${point[1]})`)
                 .join(",");
         }
         const baseUrl = `https://api.mapbox.com/directions/v5/mapbox/driving/${start[0]},${start[1]};${end[0]},${end[1]}`;
@@ -329,9 +303,23 @@ export default function MapPage() {
         const endAddress = form.elements["end-address"].value;
         const useExclusions = form.elements["exclude-checkbox"].checked;
 
-        // Hard-coded avoid point(s) in [lon, lat] order.
-        const avoidPoints = [[-118.20695444568196, 33.79677470884872]];
-        const pointsToExclude = useExclusions ? avoidPoints : [];
+        let pointsToExclude = [];
+
+        if (useExclusions) {
+            try {
+                const response = await fetch('http://127.0.0.1:5000/api/coords-risk');
+                if (response.ok) {
+                    const data = await response.json();
+                    // Map over the returned data to extract the coordinates ([lng, lat])
+                    pointsToExclude = data.map(item => item.coordinates);
+                    console.log(pointsToExclude)
+                } else {
+                    console.error('Failed to fetch risk coordinates:', response.statusText);
+                }
+            } catch (error) {
+                console.error('Error fetching risk coordinates:', error);
+            }
+        }
 
         const startCoords = await getCoordinates(startAddress);
         const endCoords = await getCoordinates(endAddress);
@@ -344,8 +332,9 @@ export default function MapPage() {
         }
     }
 
+
     return (
-        <div className="relative h-screen w-full">
+        <div className="relative h-screen w-full overflow-hidden">
             {/* Route Settings Form (always visible) */}
             <div className="absolute w-80 right-4 top-4 z-10 bg-[#0E1018] p-4 rounded shadow-md text-white">
                 <h4 className="text-lg font-bold mb-2">Route Settings</h4>
