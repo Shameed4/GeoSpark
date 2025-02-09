@@ -267,7 +267,10 @@ function InfoCard({ title, value, change, negative }: { title: string, value: st
 function TipCard() {
   return (
     <div className={blurBlockClass}>
-      <h4>Daily Tip</h4>
+      <div className="flex">
+        <Lightbulb className="mr-2 mb-2"/>
+        <h4>Daily Tip</h4>
+      </div>
       <p className="text-sm">Avoid opening any interior doors that feel hot, and stay away from fragile trees and downed power lines.</p>
     </div>
   );
