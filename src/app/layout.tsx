@@ -38,7 +38,6 @@ export default function RootLayout({
     // Listen for storage changes globally
     window.addEventListener('storage', checkLoginStatus);
 
-    // Clean up event listener on unmount
     return () => {
       window.removeEventListener('storage', checkLoginStatus);
     };
@@ -47,8 +46,9 @@ export default function RootLayout({
   // Handle logout
   const handleLogout = () => {
     localStorage.removeItem('email'); // Clear email from localStorage
+    localStorage.setItem('isLoggedIn', 'false'); // Update login status
     setIsLoggedIn(false); // Update state to logged out
-    console.log("User logged out")
+    console.log("User successfully logged out.");
   };
 
   return (
