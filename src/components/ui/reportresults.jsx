@@ -1,10 +1,51 @@
 "use client";
+
 import { ChevronDown, Heart } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from 'next/image';
+import { useParams } from 'next/navigation';
 
 export default function Reports() {
+  const [report, setReport] = useState({});
   const [isLiked, setIsLiked] = useState(false);
+
+  useEffect(() => {
+    async function fetchReports() {
+      try {
+        const response = await fetch('http://127.0.0.1:5000/api/all-data', {
+          method: 'GET',
+        });
+        console.log(response);
+        console.log("Successful fetching data");
+        const data = await response.json();
+        console.log(data);
+        console.log("Running for loop");
+        for (const key of Object.keys(data)) {
+          const geoResponse = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${key.split(",")[0]}&lon=${key.split(",")[1]}&format=json`);
+          const geoData = await geoResponse.json();
+          if (geoData["error"])
+            data[key].placeName = "Invalid location";
+          else
+            data[key].placeName = geoData.address.city || geoData.address.town || geoData.address.village || "Unknown Location";
+          const timestamp = new Date(data[key]["timestamp"]);
+          const formattedDate = timestamp.toLocaleString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true,
+          });
+          console.log(formattedDate)
+          data[key].time = formattedDate
+        }
+        setReports(data);
+      } catch (error) {
+        console.error("Error fetching report:", error);
+      }
+    }
+    fetchReports();
+  }, [])
 
   return (
     <div className="w-full flex flex-col lg:flex-row min-h-screen">
@@ -63,7 +104,7 @@ export default function Reports() {
       {/* Visual */}
       <div className="border-l border-gray-700 lg:basis-[30%] flex-1 relative lg:h-screen">
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent z-10" /> {/* Upper black gradient */}
-        
+
         <div className="relative h-full"> {/* Image, Heart, Description */}
           <Image
             src="/forest.jpg"
@@ -72,7 +113,7 @@ export default function Reports() {
             fill
             priority
           />
-          
+
           <div className="absolute bottom-20 right-6 glass px-6 py-4 rounded-lg z-20">
             <h3 className="text-white text-2xl font-medium text-critical-light">Risk: CRITICAL</h3>
             <p className="text-sm text-white/70 mt-2 max-w-xs">
@@ -80,14 +121,13 @@ export default function Reports() {
             </p>
           </div>
 
-          <button 
+          <button
             onClick={() => setIsLiked(!isLiked)}
             className="absolute bottom-6 right-6 p-3 glass rounded-full hover:bg-white/10 transition-colors z-20"
           >
-            <Heart 
-              className={`w-6 h-6 transition-colors ${
-                isLiked ? 'fill-red-500 text-red-500' : 'text-white/70'
-              }`}
+            <Heart
+              className={`w-6 h-6 transition-colors ${isLiked ? 'fill-red-500 text-red-500' : 'text-white/70'
+                }`}
             />
           </button>
         </div>
