@@ -6,6 +6,8 @@ import Nav from "@/components/nav";
 import { ChevronRight, Search, Lightbulb, LogOut } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import Image from "next/image";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,6 +27,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const checkLoginStatus = () => {
@@ -48,6 +51,7 @@ export default function RootLayout({
     localStorage.removeItem('email'); // Clear email from localStorage
     localStorage.setItem('isLoggedIn', 'false'); // Update login status
     setIsLoggedIn(false); // Update state to logged out
+    router.push('/'); // Redirect to homepage
     console.log("User successfully logged out.");
   };
 
@@ -58,7 +62,16 @@ export default function RootLayout({
       >
         <div className="flex min-h-[100vh]">
           <div className="flex flex-col p-10 gap-7 w-80 border-r-neutral-800 border-r-[1px]">
-            <h1 className="text-xl text-neutral-300 mb-8">LIT 🔥</h1>
+            <div className="flex items-center">
+              <Image
+                className="mr-2"
+                src="/Logo.png"
+                alt="logo"
+                width={60}
+                height={60}
+              />
+              <h1 className="text-2xl text-neutral-300 font-bold">LIT</h1>
+            </div>
             <Nav />
             {!isLoggedIn && (
               <div className="flex flex-col items-center space-y-4 w-full">
