@@ -4,6 +4,7 @@ import Image from 'next/image';
 
 const Register = () => {
     const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
@@ -35,7 +36,7 @@ const Register = () => {
                             onChange={(e) => setFirstName(e.target.value)}
                             required
                             placeholder="John"
-                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none"
                         />
                     </div>
                     <div>
@@ -43,11 +44,11 @@ const Register = () => {
                         <input
                             type="text"
                             id="lastName"
-                            value={firstName}
-                            onChange={(e) => setFirstName(e.target.value)}
+                            value={lastName}
+                            onChange={(e) => setLastName(e.target.value)}
                             required
                             placeholder="Doe"
-                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none"
                         />
                     </div>
                     <div>
@@ -59,7 +60,7 @@ const Register = () => {
                             onChange={(e) => setEmail(e.target.value)}
                             placeholder="example@email.com"
                             required
-                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none"
                         />
                     </div>
                     <div>
@@ -72,12 +73,12 @@ const Register = () => {
                             required
                             placeholder="At least 8 characters"
                             minLength="8"
-                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none"
                         />
                     </div>
                     <button
                         type="submit"
-                        className="bg-[#313131] w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                        className="bg-[#313131] w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2"
                     >
                         Register
                     </button>
@@ -89,7 +90,7 @@ const Register = () => {
                 </div>
                 <button
                     onClick={handleGoogleRegister}
-                    className="w-full mt-4 flex items-center justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    className="w-full mt-4 flex items-center justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2"
                 >
                     <Image
                         src="/Google.png"

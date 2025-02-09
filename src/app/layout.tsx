@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter, ABeeZee, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Nav from "@/components/nav";
-import { ChevronRight, Search } from "lucide-react";
+import { ChevronRight, Search, Lightbulb } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 const geistSans = Geist({
@@ -34,7 +34,7 @@ export default function RootLayout({
       >
         <div className="flex min-h-[100vh]">
           <div className="flex flex-col p-10 gap-7 w-80 border-r-neutral-800 border-r-[1px]">
-            <h1 className="text-xl text-white mb-8">Project Name</h1>
+            <h1 className="text-xl text-neutral-300 mb-8">LIT 🔥</h1>
             <Nav />
             <div className="relative text-neutral-100">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2" />
