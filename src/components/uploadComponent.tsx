@@ -41,6 +41,7 @@ export default function FileUpload() {
 
   return (
     <div className="flex flex-col items-center p-4 border rounded-lg shadow-md max-w-sm mx-auto">
+      <FileUpload />
       <input type="file" onChange={handleFileChange} className="mb-2" />
       <button 
         onClick={handleUpload} 

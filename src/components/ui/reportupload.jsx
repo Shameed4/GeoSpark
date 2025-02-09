@@ -66,6 +66,7 @@ export default function Upload() {
 
   return (
     <div className="min-h-screen w-full bg-[#111219] text-white p-8">
+      <FileUpload />
       <div className="relative rounded-lg overflow-hidden mb-8 h-80">
         <Image
           src="/uploadbg.jpeg"
