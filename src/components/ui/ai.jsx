@@ -105,8 +105,6 @@ export default function AI() {
                   </div>
                 </div>
               )}
-
-
             </div>
           ))}
           <div ref={messagesEndRef} />
