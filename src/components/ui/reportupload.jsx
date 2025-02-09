@@ -10,44 +10,45 @@ export default function Upload() {
   useEffect(() => {
     async function fetchReport() {
       try {
-        // const response = await fetch('/api/report', {
-        //   method: 'GET',
-        // });
-
+        const response = await fetch('http://127.0.0.1:5000/api/all-data', {
+          method: 'GET',
+        });
         // if (!response.ok) {
         //   console.log("Error fetching data");
         //   throw new Error(`HTTP error! Status: ${response.status}`);
         // }
+        console.log(response);
         console.log("Successful fetching data");
-        // const data = await response.json();
-        const data = {
-          "34.0522,-118.2437": {
-            "fire": true,
-            "risk": "high",
-            "temp": 53.01,
-            "wind_str": 3.44,
-            "wind_dir": 60,
-            "humidity": 78,
-            "aqi": 2,
-            "pressure": 1017,
-            "visibility": 10000,
-            "precipitation": 0,
-            "timestamp": "2025-02-09T01:31:39.137897"
-          },
-          "37.7749,-122.4194": {
-            "fire": true,
-            "risk": "high",
-            "temp": 46.47,
-            "wind_str": 4.61,
-            "wind_dir": 290,
-            "humidity": 78,
-            "aqi": 2,
-            "pressure": 1025,
-            "visibility": 10000,
-            "precipitation": 0,
-            "timestamp": "2025-02-09T01:32:58.568582"
-          }
-        }
+        const data = await response.json();
+        console.log(data);
+        // const data = {
+        //   "34.0522,-118.2437": {
+        //     "fire": true,
+        //     "risk": "high",
+        //     "temp": 53.01,
+        //     "wind_str": 3.44,
+        //     "wind_dir": 60,
+        //     "humidity": 78,
+        //     "aqi": 2,
+        //     "pressure": 1017,
+        //     "visibility": 10000,
+        //     "precipitation": 0,
+        //     "timestamp": "2025-02-09T01:31:39.137897"
+        //   },
+        //   "37.7749,-122.4194": {
+        //     "fire": true,
+        //     "risk": "high",
+        //     "temp": 46.47,
+        //     "wind_str": 4.61,
+        //     "wind_dir": 290,
+        //     "humidity": 78,
+        //     "aqi": 2,
+        //     "pressure": 1025,
+        //     "visibility": 10000,
+        //     "precipitation": 0,
+        //     "timestamp": "2025-02-09T01:32:58.568582"
+        //   }
+        // }
         console.log("Running for loop");
         for (const key of Object.keys(data)) {
           const geoResponse = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${key.split(",")[0]}&lon=${key.split(",")[1]}&format=json`);
