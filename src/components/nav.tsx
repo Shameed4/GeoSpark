@@ -2,14 +2,14 @@
 
 import { usePathname } from 'next/navigation'
 import React from 'react'
-import { Bell, ClipboardList, House, LayoutGrid, Map } from 'lucide-react'
+import { Bell, ClipboardList, House, Sparkles, Map } from 'lucide-react'
 import Link from 'next/link'
 
 const links = [
   { Icon: House, name: "Home", link: "/" },
   { Icon: Map, name: "Map", link: "/map" },
   { Icon: ClipboardList, name: "Generate Report", link: "/report/upload" },
-  { Icon: LayoutGrid, name: "Other", link: "/other" },
+  { Icon: Sparkles, name: "Ask AI", link: "/askai" },
   { Icon: Bell, name: "Notifications", link: "/notifications" }
 ]
 

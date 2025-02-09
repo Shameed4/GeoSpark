@@ -36,14 +36,6 @@ export default function RootLayout({
           <div className="flex flex-col p-10 gap-7 w-80 border-r-neutral-800 border-r-[1px]">
             <h1 className="text-xl text-neutral-300 mb-8">LIT 🔥</h1>
             <Nav />
-            <div className="relative text-neutral-100">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2" />
-              <Input
-                type="text"
-                placeholder="Ask AI"
-                className="pl-10 py-2 bg-[#29292C] border-none rounded-lg focus:outline-none focus:ring-2 focus:ring-blue"
-              />
-            </div>
             <div className="p-2 bg-[#29292C] rounded-sm flex items-center">
               <div className="bg-gradient-to-t from-transparent to-white rounded-full w-14 h-14 border-white border-solid border-2 mr-2"></div>
               <div>
