@@ -22,18 +22,18 @@ export default function Nav() {
       <div className="flex flex-col gap-2 text-md">
         {links.map(({ Icon, name, link }) => (
           <Link href={link} key={name}>
-            <div
-              className={`
-                flex p-3 rounded-sm transition-colors duration-300 ease-in-out
-                ${link === pathname 
-                  ? "bg-gradient-to-r from-white to-#ce4b0c text-black" 
-                  : "hover:text-neutral-200"}
-              `}
+            {link === pathname ? (<div
+              className="relative flex p-3 rounded-sm transition-colors duration-300 ease-in-out bg-gradient-to-r from-white to-#ce4b0c text-black"
             >
+              <div className='absolute h-full w-full left-0 top-0 bg-[#0E1018] animate-grow-width'></div>
+              <Icon className='z-20 mr-2' />
+              <div className='z-20'>{name}</div>
+            </div>) : (<div className="flex p-3 rounded-sm transition-colors duration-300 ease-in-out hover:text-neutral-200">
               <Icon className='mr-2' />
               {name}
-            </div>
+            </div>)}
           </Link>
+
         ))}
       </div>
     </div>
