@@ -3,6 +3,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
+import { ChevronDown, ChevronUp, X } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
 
 // Set your Mapbox access token
 mapboxgl.accessToken =
@@ -11,6 +13,7 @@ mapboxgl.accessToken =
 export default function MapPage() {
     const mapContainerRef = useRef(null);
     const [map, setMap] = useState(null);
+    const [popUp, setPopUp] = useState(true);
 
     // Initialize the map on component mount
     useEffect(() => {
@@ -226,7 +229,7 @@ export default function MapPage() {
     return (
         <div className="relative h-screen w-full">
             {/* Form Container - vertically centered on left */}
-            <div className="absolute w-80 right-4 top-4 z-10 bg-[#0E1018] p-4 rounded shadow-md text-white">
+            {!popUp ? (<div className="absolute w-80 right-4 top-4 z-10 bg-[#0E1018] p-4 rounded shadow-md text-white">
                 <h4 className="text-lg font-bold mb-2">Route Settings</h4>
                 <form id="route-form" onSubmit={handleSubmit}>
                     <div className="space-y-4">
@@ -271,7 +274,47 @@ export default function MapPage() {
                         </button>
                     </div>
                 </form>
-            </div>
+            </div>) : (<div className="absolute w-80 right-4 top-4 z-10 bg-neutral-950 p-4 rounded shadow-md text-white">
+                <div onClick={() => setPopUp(false)} className="cursor-pointer"><X />Close</div>
+                <div className="bg-gradient-to-br from-red-50 to-red-500 p-5 rounded-md">
+                    <h4 className="text-sm">Los Angeles, CA</h4>
+                    <h2 className="text-lg">High Risk</h2>
+                    <h2 className="text-xs flex items-center gap-1"><ChevronUp size={15} /> Active Fire</h2>
+                </div>
+                <div className="flex justify-between my-4">
+                    <span>Information</span>
+                    <span className="text-purple-700">View all</span>
+                </div>
+                <div className="flex items-center justify-between">
+                    <div>ACRES BURNED</div>
+                    <div>
+                        <div>20,000</div>
+                        <h2 className="text-xs flex items-center gap-1 text-green-600"><ChevronUp size={15} /> 2.35%</h2>
+                    </div>
+                </div>
+
+                <Separator className="bg-neutral-700 my-4"/>
+                <div className="flex items-center justify-between">
+                    <div>% CONTAINED</div>
+                    <div>
+                        <div>57%</div>
+                        <h2 className="text-xs flex items-center gap-1 text-green-600"><ChevronUp size={15} /> 2.35%</h2>
+                    </div>
+                </div>
+                <Separator className="bg-neutral-700 my-4"/>
+                <div className="flex items-center justify-between">
+                    <div>START DATE</div>
+                    <div>
+                        <div>Jan. 1</div>
+                        <h2 className="text-xs flex items-center gap-1 text-red-600"><ChevronDown size={15} /> 2.35%</h2>
+                    </div>
+                </div>
+                <Separator className="bg-neutral-700 my-4"/>
+                <div className="flex items-center justify-between">
+                    <div>LAST UPDATED</div>
+                    <div>Feb. 5</div>
+                </div>
+            </div>)}
 
             {/* Map Container */}
             <div
