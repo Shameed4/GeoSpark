@@ -70,72 +70,80 @@ export default function Upload() {
 
       <div>
         <h2 className="text-2xl font-bold mb-3">Recent Fires</h2>
-        <div className="grid grid-cols-3 gap-6">
-          {Object.entries(reports).map(([coords, report]) => (
-            <div
-              key={report["timestamp"]}
-              className="group relative transition-transform duration-300 group-hover:scale-105"
-            >
-              <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-orange-500 to-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <div className="relative rounded-xl shadow-lg overflow-hidden bg-gray-800 m-[2px]">
-                <div className="relative w-full h-48">
-                  <Image
-                    src={"/palisadesfire.jpeg"}
-                    alt={"Image"}
-                    layout="fill"
-                    objectFit="cover"
-                    className="rounded-t-lg"
-                  />
-                </div>
-                <div className="p-4">
-                  <h3 className="text-xl font-bold">{report.placeName}</h3>
-                  <div className="flex items-center text-gray-400 mt-2">
-                    <span>{report.address}</span>
+
+        {/* Display loading message while reports are being fetched */}
+        {Object.keys(reports).length === 0 ? (
+          <div className="flex justify-center items-center h-32">
+            <p className="text-lg font-semibold text-gray-300 animate-pulse">Loading...</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-3 gap-6">
+            {Object.entries(reports).map(([coords, report]) => (
+              <div
+                key={report["timestamp"]}
+                className="group relative transition-transform duration-300 group-hover:scale-105"
+              >
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-orange-500 to-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="relative rounded-xl shadow-lg overflow-hidden bg-gray-800 m-[2px]">
+                  <div className="relative w-full h-48">
+                    <Image
+                      src={report.imgsrc ? report.imgsrc : '/lilacfire.jpg'}
+                      alt={"Image"}
+                      layout="fill"
+                      objectFit="cover"
+                      className="rounded-t-lg"
+                    />
                   </div>
-                  <p className="text-sm text-gray-500 mt-3">Last Updated: {report["time"]}</p>
-                  <Link href={`/report/results/${coords}`}>
-                    <button className="w-full mt-4 py-2 rounded-lg font-bold 
+                  <div className="p-4">
+                    <h3 className="text-xl font-bold">{report.placeName}</h3>
+                    <div className="flex items-center text-gray-400 mt-2">
+                      <span>{report.address}</span>
+                    </div>
+                    <p className="text-sm text-gray-500 mt-3">Last Updated: {report["time"]}</p>
+                    <Link href={`/report/results/${coords}`}>
+                      <button className="w-full mt-4 py-2 rounded-lg font-bold 
                                  bg-gray-700 text-white
                                  transition-colors transition-transform duration-300 ease-in-out 
                                  hover:scale-105 active:scale-95">
-                      View Details
-                    </button>
-                  </Link>
-                </div>
-                <div
-                  className="absolute top-3 right-3 cursor-pointer"
-                  onClick={() => toggleHeart(report.id)}
-                >
-                  {report.liked ? (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-6 w-6 text-red-500"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-                    </svg>
-                  ) : (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-6 w-6 text-gray-400 hover:text-red-500 transition"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 21l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
-                      />
-                    </svg>
-                  )}
+                        View Details
+                      </button>
+                    </Link>
+                  </div>
+                  <div
+                    className="absolute top-3 right-3 cursor-pointer"
+                    onClick={() => toggleHeart(report.id)}
+                  >
+                    {report.liked ? (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-6 w-6 text-red-500"
+                        fill="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                      </svg>
+                    ) : (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-6 w-6 text-gray-400 hover:text-red-500 transition"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 21l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                        />
+                      </svg>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
