@@ -23,6 +23,7 @@ export default function MapPage() {
                 pitch: 45,
                 bearing: -17.6,
             });
+
             mapInstance.on("load", () => {
                 // Add 3D terrain
                 mapInstance.addSource("mapbox-dem", {
@@ -32,10 +33,51 @@ export default function MapPage() {
                     maxzoom: 14,
                 });
                 mapInstance.setTerrain({ source: "mapbox-dem", exaggeration: 1.5 });
+
+                // Add custom markers
+                addCustomMarkers(mapInstance);
+
                 setMap(mapInstance);
             });
         }
     }, [map]);
+
+    async function fetchMarkerData() {
+        try {
+            const response = await fetch('http://127.0.0.1:5000/api/markers'); // Adjust URL if needed
+            if (!response.ok) {
+                throw new Error('Failed to fetch marker data');
+            }
+            const markers = await response.json();
+            return markers;
+        } catch (error) {
+            console.error('Error fetching marker data:', error);
+            return [];
+        }
+    }
+
+    async function addCustomMarkers(mapInstance) {
+        const locations = await fetchMarkerData(); // Fetch markers from backend
+
+        locations.forEach((location) => {
+            // Create a DOM element for each marker
+            const el = document.createElement("div");
+            el.className = "custom-marker";
+            el.style.fontSize = "24px"; // Adjust size as needed
+            el.style.cursor = "pointer";
+            el.textContent = "🔥"; // Set the emoji as the text content
+
+            // Add marker to the map
+            new mapboxgl.Marker(el)
+                .setLngLat(location.coordinates)
+                .setPopup(
+                    new mapboxgl.Popup({ offset: 25 }).setText(location.title)
+                ) // Add popups
+                .addTo(mapInstance);
+        });
+    }
+
+
 
     // Function to fetch coordinates for a given address using Mapbox Geocoding API
     async function getCoordinates(address) {
@@ -105,7 +147,7 @@ export default function MapPage() {
                         "line-cap": "round",
                     },
                     paint: {
-                        "line-color": "#FF6F61",
+                        "line-color": "white",
                         "line-width": 5,
                         "line-opacity": 0.75,
                     },
@@ -140,7 +182,7 @@ export default function MapPage() {
                     id: "start-point",
                     type: "circle",
                     source: "start-point",
-                    paint: { "circle-radius": 10, "circle-color": "#FF6F61" },
+                    paint: { "circle-radius": 10, "circle-color": "white" },
                 });
             }
 
@@ -152,7 +194,7 @@ export default function MapPage() {
                     id: "end-point",
                     type: "circle",
                     source: "end-point",
-                    paint: { "circle-radius": 10, "circle-color": "#FF6F61" },
+                    paint: { "circle-radius": 10, "circle-color": "white" },
                 });
             }
         }
@@ -223,7 +265,7 @@ export default function MapPage() {
                         </div>
                         <button
                             type="submit"
-                            className="bg-[#FF6F61] to-red-700 text-white px-4 py-2 rounded "
+                            className="bg-white text-black px-4 py-2 rounded "
                         >
                             Calculate Route
                         </button>
