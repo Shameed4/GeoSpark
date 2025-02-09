@@ -16,7 +16,7 @@ export default function Nav() {
   const pathname = usePathname()
 
   return (
-    <div className="w-64 flex-shrink-0 text-neutral-500">
+    <div className="w-64 flex-shrink-0 text-neutral-500 z-[15]">
       <div className='text-sm mb-3'>NAVIGATION</div>
       <div className="flex flex-col gap-2 text-md">
         {links.map(({ Icon, name, link }) => (

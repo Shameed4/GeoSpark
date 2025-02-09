@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import RiskInfoCard from "./RiskInfoCard";
 import moment from 'moment';
+import { getPlaceName } from "../utils";
+import { mapboxgl } from "../utils";
 
 // Set your Mapbox access token
 mapboxgl.accessToken =
@@ -183,33 +184,6 @@ export default function MapPage() {
         }
     }
 
-    // Reverse geocoding: Get a place name from a "lat,lon" string
-    async function getPlaceName(location) {
-        // Expecting location as a string "latitude,longitude", e.g., "34.0522,-118.2437"
-        const [latStr, lngStr] = location.split(",");
-        const latitude = parseFloat(latStr.trim());
-        const longitude = parseFloat(lngStr.trim());
-
-        // Mapbox expects coordinates as "longitude,latitude"
-        const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${longitude},${latitude}.json?access_token=${mapboxgl.accessToken}`;
-
-        try {
-            const response = await fetch(url);
-            const data = await response.json();
-
-            if (data.features && data.features.length > 0) {
-                // Return the human-readable place name from the first feature.
-                return data.features[0].place_name;
-            } else {
-                alert(`No address found for coordinates: ${location}`);
-                return null;
-            }
-        } catch (error) {
-            console.error("Error fetching address:", error);
-            return null;
-        }
-    }
-
     // Use an effect to update the place name whenever riskData changes
     useEffect(() => {
         if (riskData && riskData.location) {
@@ -360,7 +334,7 @@ export default function MapPage() {
 
 
     return (
-        <div className="relative h-screen w-full">
+        <div className="relative h-screen w-full overflow-hidden">
             {/* Route Settings Form (always visible) */}
             <div className="absolute w-80 right-4 top-4 z-10 bg-[#0E1018] p-4 rounded shadow-md text-white">
                 <h4 className="text-lg font-bold mb-2">Route Settings</h4>

@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import UploadButton from "../uploadComponent";
+import { getPlaceName } from "@/app/utils";
 
 export default function Upload() {
   const [reports, setReports] = useState({});
@@ -47,7 +48,26 @@ export default function Upload() {
             "timestamp": "2025-02-09T01:32:58.568582"
           }
         }
-        console.log(data);
+        console.log("Running for loop");
+        for (const key of Object.keys(data)) {
+          const geoResponse = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${key.split(",")[0]}&lon=${key.split(",")[1]}&format=json`);
+          const geoData = await geoResponse.json();
+          if (geoData["error"])
+            data[key].placeName = "Invalid location";
+          else
+            data[key].placeName = geoData.address.city || geoData.address.town || geoData.address.village || "Unknown Location";
+          const timestamp = new Date(data[key]["timestamp"]);
+          const formattedDate = timestamp.toLocaleString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true,
+          });
+          console.log(formattedDate)
+          data[key].time = formattedDate
+        }
         setReports(data);
       } catch (error) {
         console.error("Error fetching report:", error);
@@ -103,11 +123,11 @@ export default function Upload() {
                   />
                 </div>
                 <div className="p-4">
-                  <h3 className="text-xl font-bold">{report.county}</h3>
+                  <h3 className="text-xl font-bold">{report.placeName}</h3>
                   <div className="flex items-center text-gray-400 mt-2">
                     <span>{coords}</span>
                   </div>
-                  <p className="text-sm text-gray-500 mt-3">Last Updated: {report["timestamp"]}</p>
+                  <p className="text-sm text-gray-500 mt-3">Last Updated: {report["time"]}</p>
                   <button
                     className="w-full mt-4 py-2 rounded-lg font-bold 
                                  bg-gray-700 text-white
