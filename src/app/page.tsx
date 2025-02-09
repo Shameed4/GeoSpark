@@ -1,9 +1,9 @@
 'use client'
 
+import { useEffect, useState } from "react";
 import { ArrowUpRight, Lightbulb } from "lucide-react";
 import { cn } from "@/lib/utils";
 import TimeOptions from "@/components/timeOptions";
-import { useState } from "react";
 
 const blockClass =
   "w-[30%] min-h-40 bg-gradient-to-br from-black to-transparent rounded-md text-neutral-200 p-3";
@@ -52,31 +52,75 @@ const nearbyFires = [
 ];
 
 export default function Home() {
+  const [location, setLocation] = useState<{ lat: number; lon: number } | null>(null);
+  const [aqi, setAqi] = useState<string | null>(null);
+  const [aqiChange, setAqiChange] = useState<string | null>(null);
+  const [humidity, setHumidity] = useState<string | null>(null);
+  const [humidityChange, setHumidityChange] = useState<string | null>(null);
+  const [city, setCity] = useState<string>("Loading...");
   const [sortOption, setSortOption] = useState("Distance");
+
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      console.error("Geolocation is not supported by this browser.");
+      setCity("Location not available");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        setLocation({ lat: latitude, lon: longitude });
+      },
+      (error) => {
+        console.error("Error getting location:", error);
+        setCity("Location permission denied");
+      }
+    );
+  }, []);
+
+  useEffect(() => {
+    async function fetchWeather() {
+      if (!location) return;
+      try {
+        const response = await fetch(`/api/weather?lat=${location.lat}&lon=${location.lon}`);
+        if (!response.ok) throw new Error("Failed to fetch weather data");
+
+        const data = await response.json();
+        setAqi(`${data.aqi.value} AQI`);
+        setAqiChange(`${data.aqi.percent_change}`);
+        setHumidity(`${data.humidity.value}%`);
+        setHumidityChange(`${data.humidity.percent_change}`);
+
+        // Reverse Geocode to Get City Name
+        const geoResponse = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${location.lat}&lon=${location.lon}&format=json`);
+        const geoData = await geoResponse.json();
+        setCity(geoData.address.city || geoData.address.town || geoData.address.village || "Unknown Location");
+
+      } catch (error) {
+        console.error("Error fetching weather data:", error);
+      }
+    }
+
+    fetchWeather();
+  }, [location]);
 
   return (
     <div className="w-full overflow-x-hidden">
-      <header
-        className="bg-cover h-52"
-        style={{
-          backgroundImage: `
-            linear-gradient(90deg, black 0%, gray 20%, #ce5217 60%, #7a2800 100%),
-            url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='200'%20height='200'%20viewBox='0%200%20200%20200'%3E%3Cfilter%20id='noise'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='10'%20numOctaves='2'%20stitchTiles='stitch'/%3E%3C/filter%3E%3Crect%20width='200'%20height='200'%20filter='url(%23noise)'/%3E%3C/svg%3E")
-          `,
-          backgroundBlendMode: "overlay",
-        }}
-      ></header>
+      <header className="bg-cover h-52" style={{
+        backgroundImage: `linear-gradient(90deg, black 0%, gray 20%, #ce5217 60%, #7a2800 100%), url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='200'%20height='200'%20viewBox='0%200%20200%20200'%3E%3Cfilter%20id='noise'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='10'%20numOctaves='2'%20stitchTiles='stitch'/%3E%3C/filter%3E%3Crect%20width='200'%20height='200'%20filter='url(%23noise)'/%3E%3C/svg%3E")`,
+        backgroundBlendMode: "overlay",
+      }}></header>
+
       <main className="-translate-y-24 p-5">
         <div className="flex w-full justify-between">
           <div className="absolute -top-14 left-0 w-full flex justify-start ml-5">
-            <h1 className="text-5xl font-bold text-white">
-              <span className="drop-shadow-[0_2px_2px_rgba(0,0,0,0.4)]">
-                Overview
-              </span>
+            <h1 className="text-5xl font-bold text-white drop-shadow-[0_2px_2px_rgba(0,0,0,0.4)]">
+              Overview
             </h1>
           </div>
-          <InfoCard title="Stony Brook, NY" value="25 AQI" change="+4.8%" />
-          <InfoCard title="Humidity" value="37%" change="-3.5%" negative />
+          <InfoCard title={city} value={aqi || "Loading..."} change={aqiChange || "..."} />
+          <InfoCard title="Humidity" value={humidity || "Loading..."} change={humidityChange || "..."} negative />
           <TipCard />
         </div>
 
@@ -109,6 +153,8 @@ export default function Home() {
         </div>
 
         <NearbyFiresTable sortOption={sortOption} setSortOption={setSortOption} />
+
+
       </main>
     </div>
   );
@@ -118,6 +164,7 @@ type NearbyFiresTableProps = {
   sortOption: string,
   setSortOption: (option: string) => void
 }
+
 function NearbyFiresTable({ sortOption, setSortOption }: NearbyFiresTableProps) {
   return (
     <div className="w-full bg-gradient-to-br from-black/50 to-transparent/50 backdrop-blur-md rounded-lg p-6">
@@ -188,7 +235,7 @@ function NearbyFiresTable({ sortOption, setSortOption }: NearbyFiresTableProps) 
   );
 }
 
-function getStatusStyle(status : string) {
+function getStatusStyle(status: string) {
   switch (status) {
     case "Resolved":
       return "bg-green-800 text-green-300";
@@ -201,23 +248,13 @@ function getStatusStyle(status : string) {
   }
 }
 
-type InfoCard = {
-  title: string,
-  value: string, 
-  change: string,
-  negative?: boolean
-}
-
-function InfoCard({ title, value, change, negative } : InfoCard) {
+function InfoCard({ title, value, change, negative }: { title: string, value: string, change: string, negative?: boolean }) {
   return (
     <div className={blurBlockClass}>
       <h4>{title}</h4>
       <h3 className="text-lg">{value}</h3>
       <div className="flex items-center">
-        <div
-          className={`flex items-center ${negative ? "text-[#EB6B6B] bg-[rgba(102,38,38,0.2)]" : "text-[#6BEBA4] bg-[rgba(38,102,99,0.2)]"
-            } px-2 py-1 rounded-3xl`}
-        >
+        <div className={`flex items-center ${negative ? "text-[#EB6B6B] bg-[rgba(102,38,38,0.2)]" : "text-[#6BEBA4] bg-[rgba(38,102,99,0.2)]"} px-2 py-1 rounded-3xl`}>
           <ArrowUpRight size={15} />
           {change}
         </div>
@@ -230,10 +267,11 @@ function InfoCard({ title, value, change, negative } : InfoCard) {
 function TipCard() {
   return (
     <div className={blurBlockClass}>
-      <h4>Daily Tip</h4>
-      <p className="text-sm">
-        Avoid opening any interior doors that feel hot, and stay away from fragile trees and downed power lines.
-      </p>
+      <div className="flex">
+        <Lightbulb className="mr-2 mb-2"/>
+        <h4>Daily Tip</h4>
+      </div>
+      <p className="text-sm">Avoid opening any interior doors that feel hot, and stay away from fragile trees and downed power lines.</p>
     </div>
   );
 }
