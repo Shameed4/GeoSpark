@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import FileUpload from "../uploadComponent";
+import UploadButton from "../uploadComponent";
 
 export default function Upload() {
   const [reports, setReports] = useState({});
@@ -66,7 +66,6 @@ export default function Upload() {
 
   return (
     <div className="min-h-screen w-full bg-[#111219] text-white p-8">
-      <FileUpload />
       <div className="relative rounded-lg overflow-hidden mb-8 h-80">
         <Image
           src="/uploadbg.jpeg"
@@ -81,17 +80,7 @@ export default function Upload() {
             Generate a Report For An Undocumented Wildfire Near You
           </h1>
           <p className="text-gray-300 mb-6">Accepted Video Formats: .MP4, .MOV, .M4V</p>
-          <button
-            onClick={() => alert("Upload logic triggered!")}
-            className="flex items-center justify-center gap-2 px-6 py-3 text-white font-semibold rounded-xl 
-                       bg-gradient-to-r from-white to-orange-500 
-                       hover:from-orange-400 hover:to-orange-600
-                       transition-colors transition-transform duration-300 ease-in-out 
-                       hover:scale-105 active:scale-95 shadow-lg"
-          >
-            <span className="drop-shadow-[0_2px_2px_rgba(0,0,0,0.4)]">Upload</span>
-            <Image src={"/ai.png"} alt={"AI"} width={15} height={15} className="mb-1" />
-          </button>
+          <UploadButton />
         </div>
       </div>
       <div>

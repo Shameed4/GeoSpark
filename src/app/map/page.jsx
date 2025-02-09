@@ -11,7 +11,6 @@ mapboxgl.accessToken =
     "pk.eyJ1Ijoicml0ZXNzc2hoaCIsImEiOiJjbTZ3aXRrc3UwajF3MmxxNm1xMDYwNWlxIn0.ovuV5vNE3yW_gcwDIMk4yA";
 
 export default function MapPage() {
-    return <h1>Hello</h1>
     const mapContainerRef = useRef(null);
     const [map, setMap] = useState(null);
     const [popUp, setPopUp] = useState(true);
