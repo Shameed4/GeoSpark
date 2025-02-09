@@ -3,8 +3,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { ChevronDown, ChevronUp, X } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
+import RiskInfoCard from "./RiskInfoCard";
+import moment from 'moment';
 
 // Set your Mapbox access token
 mapboxgl.accessToken =
@@ -13,7 +13,10 @@ mapboxgl.accessToken =
 export default function MapPage() {
     const mapContainerRef = useRef(null);
     const [map, setMap] = useState(null);
-    const [popUp, setPopUp] = useState(true);
+    const [riskData, setRiskData] = useState(null);
+    const [showRiskCard, setShowRiskCard] = useState(false);
+    // New state variable to store the resolved place name.
+    const [locationName, setLocationName] = useState("");
 
     // Initialize the map on component mount
     useEffect(() => {
@@ -27,7 +30,7 @@ export default function MapPage() {
                 bearing: -17.6,
             });
 
-            mapInstance.on("load", () => {
+            mapInstance.on("load", async () => {
                 // Add 3D terrain
                 mapInstance.addSource("mapbox-dem", {
                     type: "raster-dem",
@@ -37,50 +40,128 @@ export default function MapPage() {
                 });
                 mapInstance.setTerrain({ source: "mapbox-dem", exaggeration: 1.5 });
 
-                // Add custom markers
+                // Add custom markers for fire locations
                 addCustomMarkers(mapInstance);
+
+                // Fetch and add GeoJSON data as hospital markers
+                const geojsonData = await fetchGeoJSONData();
+                if (geojsonData) {
+                    addHospitalMarkers(geojsonData, mapInstance);
+                }
 
                 setMap(mapInstance);
             });
         }
+
+        return () => map?.remove();
     }, [map]);
 
-    async function fetchMarkerData() {
-        try {
-            const response = await fetch('http://127.0.0.1:5000/api/markers'); // Adjust URL if needed
-            if (!response.ok) {
-                throw new Error('Failed to fetch marker data');
-            }
-            const markers = await response.json();
-            return markers;
-        } catch (error) {
-            console.error('Error fetching marker data:', error);
-            return [];
-        }
-    }
+    // Add hospital markers (kept as in your original code)
+    async function addHospitalMarkers(geojsonData, mapInstance) {
+        geojsonData.features.forEach((feature) => {
+            const coordinates = feature.geometry.coordinates;
+            const description = feature.properties.description || "Hospital";
 
-    async function addCustomMarkers(mapInstance) {
-        const locations = await fetchMarkerData(); // Fetch markers from backend
-
-        locations.forEach((location) => {
-            // Create a DOM element for each marker
+            // Create a DOM element for the hospital marker
             const el = document.createElement("div");
-            el.className = "custom-marker";
+            el.className = "hospital-marker";
             el.style.fontSize = "24px"; // Adjust size as needed
             el.style.cursor = "pointer";
-            el.textContent = "🔥"; // Set the emoji as the text content
+            el.textContent = "\ud83c\udfe5"; // Hospital emoji
 
-            // Add marker to the map
+            // Add marker to the map with a simple popup
             new mapboxgl.Marker(el)
-                .setLngLat(location.coordinates)
-                .setPopup(
-                    new mapboxgl.Popup({ offset: 25 }).setText(location.title)
-                ) // Add popups
+                .setLngLat(coordinates)
+                .setPopup(new mapboxgl.Popup({ offset: 25 }).setText(description))
                 .addTo(mapInstance);
         });
     }
 
+    // Function to fetch GeoJSON data from the Flask backend
+    async function fetchGeoJSONData() {
+        try {
+            const response = await fetch("http://127.0.0.1:5000/api/geojson");
+            if (!response.ok) {
+                throw new Error("Failed to fetch GeoJSON data");
+            }
+            const geojsonData = await response.json();
+            return geojsonData;
+        } catch (error) {
+            console.error("Error fetching GeoJSON data:", error);
+            return null;
+        }
+    }
 
+    // Fetch markers for fire locations from your API
+    async function fetchMarkerData() {
+        try {
+            const response = await fetch("http://127.0.0.1:5000/api/coords-risk");
+            if (!response.ok) {
+                throw new Error("Failed to fetch marker data");
+            }
+            const markers = await response.json();
+            return markers;
+        } catch (error) {
+            console.error("Error fetching marker data:", error);
+            return [];
+        }
+    }
+
+    // Add fire markers to the map
+    async function addCustomMarkers(mapInstance) {
+        const locations = await fetchMarkerData(); // Fetch markers from backend
+
+        locations.forEach((location) => {
+            // Create a DOM element for each fire marker
+            const el = document.createElement("div");
+            el.className = "custom-marker";
+            el.style.fontSize = "24px";
+            el.style.cursor = "pointer";
+            el.textContent = "\ud83d\udd25"; // Fire emoji
+
+            // Add a click event handler to fetch risk info and show the pop-up:
+            el.addEventListener("click", async () => {
+                // Convert coordinates from [lon, lat] to "lat,lon" for the API key.
+                const coordsKey = `${location.coordinates[1]},${location.coordinates[0]}`;
+                try {
+                    const response = await fetch(
+                        `http://127.0.0.1:5000/api/all-data?coords=${coordsKey}`
+                    );
+                    const data = await response.json();
+                    if (data.error) {
+                        alert(data.error);
+                        return;
+                    }
+                    // The API returns data in the form:
+                    // { "34.0522,-118.2437": { ... } }
+                    const riskInfo = data[coordsKey];
+                    if (riskInfo) {
+                        // Extract only the necessary fields:
+                        const extractedData = {
+                            location: coordsKey,
+                            fire: riskInfo.fire,
+                            risk: riskInfo.risk,
+                            wind_str: riskInfo.wind_str,
+                            wind_dir: riskInfo.wind_dir,
+                            humidity: riskInfo.humidity,
+                            timestamp: riskInfo.timestamp,
+                        };
+                        setRiskData(extractedData);
+                        setShowRiskCard(true);
+                    } else {
+                        alert("No risk information found for this location.");
+                    }
+                } catch (error) {
+                    console.error("Error fetching risk info:", error);
+                }
+            });
+
+            // Add the fire marker to the map.
+            new mapboxgl.Marker(el)
+                .setLngLat(location.coordinates)
+                .addTo(mapInstance);
+        });
+    }
 
     // Function to fetch coordinates for a given address using Mapbox Geocoding API
     async function getCoordinates(address) {
@@ -102,6 +183,45 @@ export default function MapPage() {
         }
     }
 
+    // Reverse geocoding: Get a place name from a "lat,lon" string
+    async function getPlaceName(location) {
+        // Expecting location as a string "latitude,longitude", e.g., "34.0522,-118.2437"
+        const [latStr, lngStr] = location.split(",");
+        const latitude = parseFloat(latStr.trim());
+        const longitude = parseFloat(lngStr.trim());
+
+        // Mapbox expects coordinates as "longitude,latitude"
+        const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${longitude},${latitude}.json?access_token=${mapboxgl.accessToken}`;
+
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (data.features && data.features.length > 0) {
+                // Return the human-readable place name from the first feature.
+                return data.features[0].place_name;
+            } else {
+                alert(`No address found for coordinates: ${location}`);
+                return null;
+            }
+        } catch (error) {
+            console.error("Error fetching address:", error);
+            return null;
+        }
+    }
+
+    // Use an effect to update the place name whenever riskData changes
+    useEffect(() => {
+        if (riskData && riskData.location) {
+            getPlaceName(riskData.location)
+                .then((name) => setLocationName(name))
+                .catch((error) => {
+                    console.error("Error fetching place name:", error);
+                    setLocationName("Unknown location");
+                });
+        }
+    }, [riskData]);
+
     // Function to get a route using the beta "exclude" syntax
     async function getRoute(start, end, pointsToExclude) {
         let excludeParam = "";
@@ -109,11 +229,9 @@ export default function MapPage() {
             excludeParam = pointsToExclude
                 .filter(
                     (point) =>
-                        point.length === 2 &&
-                        !isNaN(point[0]) &&
-                        !isNaN(point[1])
+                        point.length === 2 && !isNaN(point[0]) && !isNaN(point[1])
                 )
-                .map((point) => `point(${point[0]} ${point[1]})`)
+                .map((point) => `${point[0]} ${point[1]}`)
                 .join(",");
         }
         const baseUrl = `https://api.mapbox.com/directions/v5/mapbox/driving/${start[0]},${start[1]};${end[0]},${end[1]}`;
@@ -161,7 +279,7 @@ export default function MapPage() {
         }
     }
 
-    // Update markers for the start and end points
+    // Update markers for the start and end points on the map
     function updateMarkers(start, end) {
         const startGeoJSON = {
             type: "FeatureCollection",
@@ -203,7 +321,7 @@ export default function MapPage() {
         }
     }
 
-    // Handle form submission
+    // Handle form submission for calculating a route
     async function handleSubmit(e) {
         e.preventDefault();
         const form = e.target;
@@ -228,8 +346,8 @@ export default function MapPage() {
 
     return (
         <div className="relative h-screen w-full">
-            {/* Form Container - vertically centered on left */}
-            {!popUp ? (<div className="absolute w-80 right-4 top-4 z-10 bg-[#0E1018] p-4 rounded shadow-md text-white">
+            {/* Route Settings Form (always visible) */}
+            <div className="absolute w-80 right-4 top-4 z-10 bg-[#0E1018] p-4 rounded shadow-md text-white">
                 <h4 className="text-lg font-bold mb-2">Route Settings</h4>
                 <form id="route-form" onSubmit={handleSubmit}>
                     <div className="space-y-4">
@@ -242,7 +360,7 @@ export default function MapPage() {
                                 name="start-address"
                                 id="start-address"
                                 placeholder="1600 Pennsylvania Ave NW, Washington, DC"
-                                className="w-full border-none text-white p-2 border border-gray-300 rounded bg-[#29292C] border-collapse placeholder-white"
+                                className="w-full border-none text-white p-2 border border-gray-300 rounded bg-[#29292C] placeholder-white"
                             />
                         </div>
                         <div>
@@ -254,7 +372,7 @@ export default function MapPage() {
                                 name="end-address"
                                 id="end-address"
                                 placeholder="1 Infinite Loop, Cupertino, CA"
-                                className="w-full border-none text-white p-2 border border-gray-300 rounded bg-[#29292C] border-collapse placeholder-white"
+                                className="w-full border-none text-white p-2 border border-gray-300 rounded bg-[#29292C] placeholder-white"
                             />
                         </div>
                         <div className="flex items-center">
@@ -264,64 +382,36 @@ export default function MapPage() {
                                 id="exclude-checkbox"
                                 className="mr-2"
                             />
-                            <label htmlFor="exclude-checkbox">Exclude Dangerous Routes</label>
+                            <label htmlFor="exclude-checkbox">
+                                Exclude Dangerous Routes
+                            </label>
                         </div>
                         <button
                             type="submit"
-                            className="bg-white text-black px-4 py-2 rounded "
+                            className="bg-white text-black px-4 py-2 rounded"
                         >
                             Calculate Route
                         </button>
                     </div>
                 </form>
-            </div>) : (<div className="absolute w-80 right-4 top-4 z-10 bg-neutral-950 p-4 rounded shadow-md text-white">
-                <div onClick={() => setPopUp(false)} className="cursor-pointer"><X />Close</div>
-                <div className="bg-gradient-to-br from-red-50 to-red-500 p-5 rounded-md">
-                    <h4 className="text-sm">Los Angeles, CA</h4>
-                    <h2 className="text-lg">High Risk</h2>
-                    <h2 className="text-xs flex items-center gap-1"><ChevronUp size={15} /> Active Fire</h2>
-                </div>
-                <div className="flex justify-between my-4">
-                    <span>Information</span>
-                    <span className="text-purple-700">View all</span>
-                </div>
-                <div className="flex items-center justify-between">
-                    <div>ACRES BURNED</div>
-                    <div>
-                        <div>20,000</div>
-                        <h2 className="text-xs flex items-center gap-1 text-green-600"><ChevronUp size={15} /> 2.35%</h2>
-                    </div>
-                </div>
+            </div>
 
-                <Separator className="bg-neutral-700 my-4"/>
-                <div className="flex items-center justify-between">
-                    <div>% CONTAINED</div>
-                    <div>
-                        <div>57%</div>
-                        <h2 className="text-xs flex items-center gap-1 text-green-600"><ChevronUp size={15} /> 2.35%</h2>
-                    </div>
-                </div>
-                <Separator className="bg-neutral-700 my-4"/>
-                <div className="flex items-center justify-between">
-                    <div>START DATE</div>
-                    <div>
-                        <div>Jan. 1</div>
-                        <h2 className="text-xs flex items-center gap-1 text-red-600"><ChevronDown size={15} /> 2.35%</h2>
-                    </div>
-                </div>
-                <Separator className="bg-neutral-700 my-4"/>
-                <div className="flex items-center justify-between">
-                    <div>LAST UPDATED</div>
-                    <div>Feb. 5</div>
-                </div>
-            </div>)}
+            {/* Risk Info Card Popup (shown when a fire marker is clicked) */}
+            {showRiskCard && riskData && (
+                <RiskInfoCard
+                    location={locationName}  // Pass the resolved string value
+                    riskLevel={riskData.risk}
+                    activeFire={riskData.fire}
+                    windDir={riskData.wind_dir}
+                    windStr={riskData.wind_str}
+                    humidity={riskData.humidity}
+                    timeStamp={moment(riskData.timestamp).format("MMMM Do YYYY, h:mm:ss a")}
+                    onClose={() => setShowRiskCard(false)}
+                />
+            )}
 
             {/* Map Container */}
-            <div
-                id="map-container"
-                ref={mapContainerRef}
-                className="w-full h-full"
-            ></div>
+            <div id="map-container" ref={mapContainerRef} className="w-full h-full"></div>
         </div>
     );
 }
