@@ -10,7 +10,8 @@
         "pressure": 1017,
         "visibility": 10000,
         "precipitation": 0,
-        "timestamp": "2025-02-09T01:31:39.137897"
+        "timestamp": "2025-02-09T01:31:39.137897",
+        "imgsrc": "/palisadesfire.jpeg"
     },
     "37.7749,-122.4194": {
         "fire": true,
@@ -23,19 +24,21 @@
         "pressure": 1025,
         "visibility": 10000,
         "precipitation": 0,
-        "timestamp": "2025-02-09T02:01:04.183015"
+        "timestamp": "2025-02-09T02:01:04.183015",
+        "imgsrc": "/eatonfire.jpg"
     },
     "47.6062,-122.3321": {
         "fire": true,
         "risk": "high",
-        "temp": 34.56,
-        "wind_str": 5.75,
-        "wind_dir": 120,
+        "temp": 34.39,
+        "wind_str": 3,
+        "wind_dir": 80,
         "humidity": 93,
         "aqi": 2,
         "pressure": 1032,
-        "visibility": 8047,
-        "precipitation": 0.51,
-        "timestamp": "2025-02-09T06:10:29.281580"
+        "visibility": 6437,
+        "precipitation": 0,
+        "timestamp": "2025-02-09T07:51:26.149478",
+        "imgsrc": "/lilacfire.jpg"
     }
 }

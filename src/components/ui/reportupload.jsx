@@ -87,7 +87,7 @@ export default function Upload() {
                 <div className="relative rounded-xl shadow-lg overflow-hidden bg-gray-800 m-[2px]">
                   <div className="relative w-full h-48">
                     <Image
-                      src={"/palisadesfire.jpeg"}
+                      src={report.imgsrc ? report.imgsrc : '/lilacfire.jpg'}
                       alt={"Image"}
                       layout="fill"
                       objectFit="cover"
