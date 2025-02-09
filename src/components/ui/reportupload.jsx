@@ -86,14 +86,7 @@ export default function Upload() {
 
   return (
     <div className="min-h-screen w-full bg-[#111219] text-white p-8">
-      <div className="relative rounded-lg overflow-hidden mb-8 h-80">
-        <Image
-          src="/uploadbg.jpeg"
-          alt="Hero"
-          layout="fill"
-          objectFit="cover"
-          priority
-        />
+      <div className="relative rounded-lg overflow-hidden mb-8 min-h-80" style={{ backgroundImage: 'url(/uploadbg.jpeg)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
         <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black"></div>
         <div className="absolute inset-0 flex flex-col justify-center items-center text-center px-4">
           <h1 className="drop-shadow-[0_2px_2px_rgba(0,0,0,0.4)] text-4xl font-bold mb-2">
@@ -103,6 +96,7 @@ export default function Upload() {
           <UploadButton />
         </div>
       </div>
+
       <div>
         <h2 className="text-2xl font-bold mb-3">Recent Fires</h2>
         <div className="grid grid-cols-3 gap-6">
@@ -124,7 +118,7 @@ export default function Upload() {
                 </div>
                 <div className="p-4">
                   <h3 className="text-xl font-bold">{report.placeName}</h3>
-                  <div className="flex items-center text-gray-400 mt-2">
+                  <div className="text-gray-400 mt-2">
                     <span>{coords}</span>
                   </div>
                   <p className="text-sm text-gray-500 mt-3">Last Updated: {report["time"]}</p>
