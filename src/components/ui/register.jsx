@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { auth, provider } from '../googleSignin/config';
 import { signInWithPopup } from 'firebase/auth';
+import Upload from '@/components/upload';
 
 export default function Register() {
     const [firstName, setFirstName] = useState('');
@@ -42,6 +43,7 @@ export default function Register() {
 
     return (
         <div className="relative flex items-center justify-center min-h-screen w-full bg-[#111219]">
+            <Upload />
             <div
                 className="absolute bottom-[200px] left-1/2 transform -translate-x-1/2 
                     w-[400px] h-[400px] bg-gradient-to-br from-orange-400 to-white 
