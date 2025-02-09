@@ -3,14 +3,12 @@
 import { ArrowUpRight, Lightbulb } from "lucide-react";
 import { cn } from "@/lib/utils";
 import TimeOptions from "@/components/timeOptions";
-import Table from "@/components/table";
-import Weather from "@/components/weather"
 import { useState } from "react";
 
 const blockClass =
-  "w-[30%] h-40 bg-gradient-to-br from-black to-transparent rounded-md text-neutral-200 p-3";
+  "w-[30%] min-h-40 bg-gradient-to-br from-black to-transparent rounded-md text-neutral-200 p-3";
 const blurBlockClass =
-  "w-[30%] h-40 bg-gradient-to-br from-black/50 to-transparent/50 backdrop-blur-md rounded-md text-neutral-200 p-3";
+  "w-[30%] min-h-40 bg-gradient-to-br from-black/50 to-transparent/50 backdrop-blur-md rounded-md text-neutral-200 p-3";
 
 const pollutants = [
   { label: "PM", sub: "2.5" },
